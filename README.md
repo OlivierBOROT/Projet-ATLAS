@@ -1,23 +1,12 @@
 # Projet ATLAS
+
 ### A.T.L.A.S. — Analyse Textuelle et Localisation des Annonces Spécialisées
 
-<table style="border: none;">
-  <tr style="border: none;">
-    <td width="200" align="center" style="border: none;">
-      <img src="images/Logo.jpg" alt="Logo ATLAS" width="150">
-    </td>
-    <td style="border: none;">
-      ATLAS est un projet de Text Mining / NLP appliqué aux offres d’emploi, 
-      avec une dimension géographique, une couche de web scraping, une base de 
-      données modélisée en entrepôt, et une application interactive pour explorer 
-      et visualiser les analyses.
-    </td>
-  </tr>
-</table>
+<p align="center">
+  <img src="images/Logo.jpg" alt="Logo ATLAS" width="250">
+</p>
 
-
-
-
+ATLAS est un projet de Text Mining / NLP appliqué aux offres d’emploi, avec une dimension géographique, une couche de web scraping, une base de données modélisée en entrepôt, et une application interactive pour explorer et visualiser les analyses.
 
 # Objectifs du projet
 
