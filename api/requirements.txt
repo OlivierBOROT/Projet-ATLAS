@@ -1,0 +1,24 @@
+# API Framework
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+
+# Database
+sqlalchemy==2.0.36
+psycopg2-binary==2.9.10
+alembic==1.14.0
+
+# Validation
+pydantic==2.10.3
+pydantic-settings==2.6.1
+
+# NLP
+spacy==3.8.2
+sentence-transformers==3.3.1
+
+# Vector DB
+pgvector==0.3.6
+
+# Utils
+python-dotenv==1.0.1
+requests==2.32.3
+numpy==1.26.4
