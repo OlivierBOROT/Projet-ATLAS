@@ -1,20 +1,26 @@
-# Requirements pour collecteurs ATLAS
-# ====================================
+# Requirements pour collecteurs ATLAS + nettoyage locations
+# Compatible Python 3.10, 3.11, 3.12
+# ============================================================
 
+# ==========================================
+# COLLECTEURS (existant)
+# ==========================================
 # Core
-requests==2.32.3
-python-dotenv==1.0.1
+requests>=2.31.0
+python-dotenv>=1.0.0
 
 # Database
-sqlalchemy==2.0.36
-psycopg2-binary==2.9.10
+sqlalchemy>=2.0.23
+psycopg2-binary>=2.9.9
 
 # Scraping
-beautifulsoup4==4.12.3
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
 
 # Selenium (pour WTTJ, Indeed, APEC)
-selenium==4.16.0
-webdriver-manager==4.0.1
+selenium>=4.16.0
+webdriver-manager>=4.0.0
 
 # Utilities
-python-dateutil==2.8.2
+python-dateutil>=2.8.0
+tqdm>=4.66.0
