@@ -25,7 +25,8 @@ from pathlib import Path
 
 from france_travail_collector import FranceTravailCollector
 from wttj_collector import WTTJCollector
-from db_inserter import DBInserter
+#from db_inserter import DBInserter
+from db_inserter_v2 import DBInserterV2 as DBInserter
 
 
 def print_separator(title: str):
