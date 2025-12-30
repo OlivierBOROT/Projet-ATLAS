@@ -1,0 +1,12 @@
+psycopg2-binary
+sentence-transformers
+spacy
+beautifulsoup4
+lxml
+python-dotenv
+tqdm
+tabulate
+scikit-learn
+jupyter
+seaborn
+#python -m spacy download fr_core_news_md
