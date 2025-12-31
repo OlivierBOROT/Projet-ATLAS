@@ -1,0 +1,125 @@
+Développeur Web PHP / SQL / JS / AJAX (H/F)
+
+MERCI DE LIRE ATTENTIVEMENT : LE SALAIRE INDIQU├ë EST EN BRUT ET NON EN NET.
+SI CE NIVEAU DE R├ëMUN├ëRATION NE VOUS CONVIENT PAS, MERCI DE NE PAS POSTULER.
+UNE ├ëVOLUTION EST POSSIBLE, AINSI QUE DES PRIMES LI├ëES AUX AVANCEMENTS DU PROJET ERP.
+
+D├®veloppeur PHP / ERP - CDI - Courtry (77)
+
+RENOSTYLES est un groupe fond├® en 2004, sp├®cialis├® dans la vente et la pose de menuiseries ext├®rieures. L''entreprise accompagne plus de 1 300 clients par an et compte 6 points de vente en ├Äle-de-France, pour environ 35 collaborateurs.
+
+Nous d├®veloppons Luna, notre ERP m├®tier sur mesure, d├®j├á op├®rationnel sur plusieurs modules (clients, fournisseurs, affaires, produits, stock, documents, phototh├¿que.). Nous recherchons un d├®veloppeur capable de faire ├®voluer l''outil et d''accompagner la transformation digitale de l''entreprise.
+
+Missions :
+
+D├®velopper et am├®liorer les modules existants.
+
+Concevoir de nouveaux modules (commandes, facturation, interventions.).
+
+Optimiser le code, la s├®curit├® et l''ergonomie.
+
+Collaborer directement avec le porteur du projet.
+
+Contribuer ├á l''organisation technique et ├á la logique m├®tier.
+
+Participer ├á l''int├®gration de solutions d''intelligence artificielle dans les process internes (analyse de donn├®es, automatisations, assistants m├®tiers, outils pr├®dictifs.).
+
+Comp├®tences techniques :
+PHP (PDO, MVC all├®g├®e), MySQL 9.1, HTML5, CSS3 (Bootstrap 5), JavaScript ES6+, jQuery (optionnel), AJAX, DataTables, GLightbox, PhpSpreadsheet, GD/Imagick, Auth0.
+Une bonne connaissance des intelligences artificielles et de leur int├®gration dans des environnements m├®tiers est un v├®ritable atout.
+
+Profil recherch├® :
+
+Ma├«trise de PHP, SQL structur├® et JavaScript.
+
+Exp├®rience appr├®ci├®e en ERP / CRM ou applications internes.
+
+Capacit├® ├á produire un code propre, maintenable et structur├®.
+
+Autonomie, rigueur, logique m├®tier.
+
+Sensibilit├® ├á l''automatisation et ├á l''optimisation via IA.
+
+R├®mun├®ration :
+
+Salaire exprim├® en brut, non n├®gociable ├á l''embauche.
+
+Primes possibles selon les modules livr├®s, jalons atteints et r├®ceptions de travaux dans le cadre du d├®veloppement de LUNA.
+
+├ëvolution salariale envisageable.
+
+Pourquoi nous rejoindre :
+Entreprise solide, projet concret et utile, environnement structur├®, d├®cisions rapides, orientation forte vers la digitalisation et l''intelligence artificielle.
+
+-------------------------------------------------------------------
+
+Data Engineer H/F (H/F)
+
+Missions principales :
+
+Le Data Engineer est responsable de la conception, du d├®veloppement et de l''optimisation des flux/interfaces de donn├®es au sein de notre entrep├┤t de donn├®es, la plateforme Snowflake. Il garantit la qualit├®, la disponibilit├® et la performance des donn├®es utilis├®es par les ├®quipes Data et M├®tiers.
+Il joue un r├┤le cl├® dans l''industrialisation des traitements, l''automatisation des flux et la modernisation de l''architecture data de l''entreprise.
+
+Responsabilit├®s :
+
+Architecture & Mod├®lisation
+
+ * Concevoir et maintenir des mod├¿les de donn├®es adapt├®s aux besoins analytiques et op├®rationnels
+ * D├®finir les bonnes pratiques d''architecture dans Snowflake et DBT (sch├®ma BRONZE/SILVER/GOLD,)
+ * Structurer les environnements Snowflake/Airbyte en garantissant la s├®curit├®, la gouvernance et la performance.
+
+D├®veloppement & Industrialisation
+
+ * D├®velopper des pipelines d''ingestion et de transformation (ELT) performants et robustes.
+ * Automatiser les workflows DBT
+ * Impl├®menter des transformations SQL optimis├®es et document├®es.
+
+Performance & Optimisation
+
+ * Optimiser le co├╗t et les performances Snowflake (clustering, warehouses, partitions logiques.).
+ * Surveiller les jobs, analyser les logs et r├®soudre les incidents de production.
+ * Am├®liorer continuellement la qualit├® des donn├®es (monitoring, alerting, data quality rules).
+
+S├®curit├® & Gouvernance
+
+ * Appliquer les politiques de s├®curit├®, gestion des acc├¿s (RBAC), masking et confidentialit├® des donn├®es.
+ * Garantir la conformit├® aux normes internes et r├®glementaires (RGPD notamment).
+ * Contribuer au catalogue de donn├®es et ├á la documentation technique.
+
+Collaboration & Support
+
+ * Travailler en ├®troite collaboration avec les Data Analysts et ├®quipes m├®tiers (notamment Finance).
+ * Proposer des solutions techniques innovantes adapt├®es aux besoins op├®rationnels.
+ * Participer ├á la roadmap du Data Platform
+
+Objectif du poste :
+
+ * Conduire la transformation vers une fonction Reporting unique et centralis├®e
+ * Mise en place d''indicateur de suivi de la performance au niveau global (groupe) et local (pays)
+ * Garantir la disponibilit├® du DWH
+
+Formation
+
+ * Bac +5 en informatique, ing├®nierie, statistiques ou ├®quivalent.
+ * Anglais professionnel n├®cessaire
+
+Exp├®rience
+
+ * 2 ├á 5 ans d''exp├®rience en Data Engineering, id├®alement sur Snowflake.
+ * Exp├®rience dans un environnement data moderne (ELT, cloud, DataOps).
+
+Comp├®tences techniques
+
+ * Excellente ma├«trise de Snowflake
+ * Solides comp├®tences en SQL avanc├® et en mod├®lisation de donn├®es.
+ * Ma├«trise d''un outil d''orchestration (DBT de pr├®f├®rence).
+ * Exp├®rience avec des outils de CI/CD (GitHub de pr├®f├®rence).
+ * Compr├®hension des bonnes pratiques de s├®curit├®, gouvernance et optimisation de co├╗t.
+ * Bonus : Python, APIs ou autres syst├¿mes d''ingestion temps r├®el.
+
+Comp├®tences comportementales
+
+ * Rigueur, sens du d├®tail et culture de la qualit├®.
+ * Capacit├® ├á vulgariser les sujets techniques.
+ * Proactivit├®, autonomie et esprit d''├®quipe.
+ * Curiosit├® et veille technologique permanente.
