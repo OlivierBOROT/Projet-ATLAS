@@ -16,7 +16,7 @@ load_dotenv(env_path)
 conn = psycopg2.connect(os.getenv("DATABASE_URL"))
 cursor = conn.cursor()
 
-offer_id = 1177  # Offre testée avant la correction
+offer_id = 2662  # Dernière offre testée
 
 print(f"\n{'='*80}")
 print(f"🔍 VÉRIFICATION OFFRE #{offer_id}")
