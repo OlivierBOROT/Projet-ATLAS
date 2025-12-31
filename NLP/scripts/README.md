@@ -39,3 +39,5 @@ Tous les détails sont sauvegardés dans `enrichment_YYYYMMDD_HHMMSS.log` :
 - Profil identifié avec confiance (%)
 - Compétences techniques et soft skills
 - Informations extraites (formation, télétravail)
+
+MAJS : 4001, 4636, 1177, 2662 (maj du code -> ajoute bien les skills)

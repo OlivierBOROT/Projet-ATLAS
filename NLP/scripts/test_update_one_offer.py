@@ -161,10 +161,22 @@ try:
         ),
     )
 
-    # 2. Insertion des skills techniques dans dim_skills (si nouvelles)
+    # 2. Mise à jour de skills_extracted dans fact_job_offers
+    all_skills = skills["all_tech_skills"] + skills["soft_skills"]
+    cursor.execute(
+        """
+        UPDATE fact_job_offers
+        SET skills_extracted = %s
+        WHERE offer_id = %s
+        """,
+        (all_skills, offer_id),
+    )
+    print(f"\n📝 Mise à jour skills_extracted: {len(all_skills)} skills")
+
+    # 3. Insertion des skills techniques dans dim_skills (si nouvelles)
     if skills["all_tech_skills"]:
         print(
-            f"\n📝 Insertion des {len(skills['all_tech_skills'])} compétences techniques dans dim_skills..."
+            f"📝 Insertion des {len(skills['all_tech_skills'])} compétences techniques dans dim_skills..."
         )
         for skill in skills["all_tech_skills"]:
             cursor.execute(
@@ -176,7 +188,7 @@ try:
                 (skill,),
             )
 
-    # 3. Insertion des soft skills dans dim_skills (si nouvelles)
+    # 4. Insertion des soft skills dans dim_skills (si nouvelles)
     if skills["soft_skills"]:
         print(
             f"📝 Insertion des {len(skills['soft_skills'])} soft skills dans dim_skills..."
@@ -189,6 +201,21 @@ try:
                 ON CONFLICT (skill_name) DO NOTHING
             """,
                 (skill,),
+            )
+
+    # 5. Création des relations dans fact_offer_skills
+    if all_skills:
+        print(f"📝 Création des relations dans fact_offer_skills...")
+        for skill in all_skills:
+            cursor.execute(
+                """
+                INSERT INTO fact_offer_skills (offer_id, skill_id)
+                SELECT %s, skill_id 
+                FROM dim_skills 
+                WHERE skill_name = %s
+                ON CONFLICT (offer_id, skill_id) DO NOTHING
+                """,
+                (offer_id, skill),
             )
 
     conn.commit()

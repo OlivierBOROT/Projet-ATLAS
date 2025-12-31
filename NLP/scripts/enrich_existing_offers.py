@@ -180,7 +180,18 @@ class OfferEnricher:
                 ),
             )
 
-            # 2. Insertion des skills techniques dans dim_skills (si nouvelles)
+            # 2. Mise à jour du tableau skills_extracted dans fact_job_offers
+            all_skills = result["skills_tech"] + result["skills_soft"]
+            cursor.execute(
+                """
+                UPDATE fact_job_offers
+                SET skills_extracted = %s
+                WHERE offer_id = %s
+            """,
+                (all_skills, result["offer_id"]),
+            )
+
+            # 3. Insertion des skills techniques dans dim_skills (si nouvelles)
             if result["skills_tech"]:
                 for skill in result["skills_tech"]:
                     cursor.execute(
@@ -192,7 +203,7 @@ class OfferEnricher:
                         (skill,),
                     )
 
-            # 3. Insertion des soft skills dans dim_skills (si nouvelles)
+            # 4. Insertion des soft skills dans dim_skills (si nouvelles)
             if result["skills_soft"]:
                 for skill in result["skills_soft"]:
                     cursor.execute(
@@ -203,6 +214,19 @@ class OfferEnricher:
                     """,
                         (skill,),
                     )
+
+            # 5. Création des relations offer-skill dans fact_offer_skills
+            for skill in all_skills:
+                cursor.execute(
+                    """
+                    INSERT INTO fact_offer_skills (offer_id, skill_id)
+                    SELECT %s, skill_id 
+                    FROM dim_skills 
+                    WHERE skill_name = %s
+                    ON CONFLICT (offer_id, skill_id) DO NOTHING
+                """,
+                    (result["offer_id"], skill),
+                )
 
             conn.commit()
             cursor.close()
