@@ -94,16 +94,16 @@ CREATE TABLE public.ref_communes_france (
 	superficie_km2 numeric(10, 2) NULL,
 	created_at timestamp DEFAULT now() NULL,
 	updated_at timestamp DEFAULT now() NULL,
-	CONSTRAINT ref_communes_france_code_insee_code_postal_key UNIQUE (code_insee,code_postal),
+	CONSTRAINT ref_communes_france_code_insee_code_postal_key UNIQUE (code_insee, code_postal),
 	CONSTRAINT ref_communes_france_code_insee_key UNIQUE (code_insee),
 	CONSTRAINT ref_communes_france_pkey PRIMARY KEY (commune_id)
 );
-CREATE INDEX idx_commune_code_insee ON public.ref_communes_france (code_insee);
-CREATE INDEX idx_commune_code_postal ON public.ref_communes_france (code_postal);
-CREATE INDEX idx_commune_departement ON public.ref_communes_france (code_departement);
-CREATE INDEX idx_commune_nom ON public.ref_communes_france (nom_commune);
-CREATE INDEX idx_commune_nom_trgm ON public.ref_communes_france (nom_commune);
-CREATE INDEX idx_commune_region ON public.ref_communes_france (code_region);
+CREATE INDEX idx_commune_code_insee ON public.ref_communes_france USING btree (code_insee);
+CREATE INDEX idx_commune_code_postal ON public.ref_communes_france USING btree (code_postal);
+CREATE INDEX idx_commune_departement ON public.ref_communes_france USING btree (code_departement);
+CREATE INDEX idx_commune_nom ON public.ref_communes_france USING btree (nom_commune);
+CREATE INDEX idx_commune_nom_trgm ON public.ref_communes_france USING gin (nom_commune gin_trgm_ops);
+CREATE INDEX idx_commune_region ON public.ref_communes_france USING btree (code_region);
 COMMENT ON TABLE public.ref_communes_france IS 'Référentiel officiel des communes françaises (source: data.gouv.fr)';
 
 
@@ -156,6 +156,13 @@ CREATE TABLE public.fact_job_offers (
 	topic_id int4 NULL, -- ID du topic LDA (0-7)
 	topic_label varchar(100) NULL, -- Label descriptif du topic
 	topic_confidence numeric(3, 2) NULL, -- Confiance du modèle LDA (0-1)
+	profile_category varchar(100) NULL,
+	profile_score int4 NULL,
+	education_level int4 NULL,
+	education_type varchar(50) NULL,
+	remote_possible bool NULL,
+	remote_days int4 NULL,
+	remote_percentage int4 NULL,
 	CONSTRAINT fact_job_offers_external_id_key UNIQUE (external_id),
 	CONSTRAINT fact_job_offers_pkey PRIMARY KEY (offer_id),
 	CONSTRAINT fact_job_offers_commune_id_fkey FOREIGN KEY (commune_id) REFERENCES public.ref_communes_france(commune_id),
@@ -164,14 +171,14 @@ CREATE TABLE public.fact_job_offers (
 	CONSTRAINT fact_job_offers_source_id_fkey FOREIGN KEY (source_id) REFERENCES public.dim_sources(source_id),
 	CONSTRAINT fk_topic FOREIGN KEY (topic_id) REFERENCES public.dim_topics(topic_id)
 );
-CREATE INDEX idx_fact_offers_category ON public.fact_job_offers (job_category_id);
-CREATE INDEX idx_fact_offers_commune ON public.fact_job_offers (commune_id);
-CREATE INDEX idx_fact_offers_external_id ON public.fact_job_offers (external_id);
-CREATE INDEX idx_fact_offers_published_date ON public.fact_job_offers (published_date);
-CREATE INDEX idx_fact_offers_source ON public.fact_job_offers (source_id);
-CREATE INDEX idx_fact_offers_url ON public.fact_job_offers (url);
-CREATE INDEX idx_offers_topic ON public.fact_job_offers (topic_id);
-CREATE INDEX idx_offers_topic_label ON public.fact_job_offers (topic_label);
+CREATE INDEX idx_fact_offers_category ON public.fact_job_offers USING btree (job_category_id);
+CREATE INDEX idx_fact_offers_commune ON public.fact_job_offers USING btree (commune_id);
+CREATE INDEX idx_fact_offers_external_id ON public.fact_job_offers USING btree (external_id);
+CREATE INDEX idx_fact_offers_published_date ON public.fact_job_offers USING btree (published_date);
+CREATE INDEX idx_fact_offers_source ON public.fact_job_offers USING btree (source_id);
+CREATE INDEX idx_fact_offers_url ON public.fact_job_offers USING btree (url);
+CREATE INDEX idx_offers_topic ON public.fact_job_offers USING btree (topic_id);
+CREATE INDEX idx_offers_topic_label ON public.fact_job_offers USING btree (topic_label);
 COMMENT ON TABLE public.fact_job_offers IS 'Table de faits des offres d''emploi collectées';
 
 -- Column comments
@@ -192,7 +199,7 @@ CREATE TABLE public.fact_offer_skills (
 	offer_id int4 NOT NULL,
 	skill_id int4 NOT NULL,
 	confidence numeric(3, 2) NULL,
-	CONSTRAINT fact_offer_skills_pkey PRIMARY KEY (offer_id,skill_id),
+	CONSTRAINT fact_offer_skills_pkey PRIMARY KEY (offer_id, skill_id),
 	CONSTRAINT fact_offer_skills_offer_id_fkey FOREIGN KEY (offer_id) REFERENCES public.fact_job_offers(offer_id) ON DELETE CASCADE,
 	CONSTRAINT fact_offer_skills_skill_id_fkey FOREIGN KEY (skill_id) REFERENCES public.dim_skills(skill_id)
 );
@@ -214,4 +221,4 @@ CREATE TABLE public.job_embeddings (
 	CONSTRAINT job_embeddings_pkey PRIMARY KEY (embedding_id),
 	CONSTRAINT job_embeddings_offer_id_fkey FOREIGN KEY (offer_id) REFERENCES public.fact_job_offers(offer_id) ON DELETE CASCADE
 );
-CREATE INDEX idx_job_embeddings_vector ON public.job_embeddings (embedding);
+CREATE INDEX idx_job_embeddings_vector ON public.job_embeddings USING ivfflat (embedding vector_cosine_ops) WITH (lists='100');
