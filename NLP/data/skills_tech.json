@@ -52,11 +52,11 @@
     },
     "swift": {
       "synonyms": ["swift"],
-      "context_patterns": ["développement swift", "ios", "développement mobile"]
+      "context_patterns": ["développement swift", "swift.*ios", "application.*swift", "swiftui", "langage swift"]
     },
     "kotlin": {
       "synonyms": ["kotlin"],
-      "context_patterns": ["développement kotlin", "android", "développement mobile"]
+      "context_patterns": ["développement kotlin", "kotlin.*android", "application.*kotlin", "langage kotlin", "kotlin native"]
     },
     "scala": {
       "synonyms": ["scala"],
@@ -118,27 +118,27 @@
     },
     "tensorflow": {
       "synonyms": ["tensorflow", "tf"],
-      "context_patterns": ["machine learning", "deep learning", "apprentissage automatique"]
+      "context_patterns": ["framework.*tensorflow", "modèles.*tensorflow", "réseaux.*neuronaux"]
     },
     "pytorch": {
       "synonyms": ["pytorch", "torch"],
-      "context_patterns": ["machine learning", "deep learning", "apprentissage automatique"]
+      "context_patterns": ["framework.*pytorch", "modèles.*pytorch", "torch.*tensors"]
     },
     "pandas": {
       "synonyms": ["pandas"],
-      "context_patterns": ["analyse de données", "manipulation de données", "data science"]
+      "context_patterns": ["bibliothèque.*pandas", "pandas.*dataframe", "numpy.*pandas", "pandas.*python", "librairie pandas"]
     },
     "spark": {
       "synonyms": ["spark", "apache spark", "pyspark"],
-      "context_patterns": ["big data", "traitement distribué", "data engineering"]
+      "context_patterns": ["cluster.*spark", "jobs.*spark", "rdd.*spark", "spark.*streaming", "dataframe.*spark"]
     },
     "airflow": {
       "synonyms": ["airflow", "apache airflow"],
-      "context_patterns": ["orchestration", "workflow", "pipeline de données"]
+      "context_patterns": ["dags.*airflow", "airflow.*orchestration", "tasks.*airflow", "scheduler.*airflow", "pipeline.*airflow"]
     },
     "kafka": {
       "synonyms": ["kafka", "apache kafka"],
-      "context_patterns": ["streaming", "messages", "événements"]
+      "context_patterns": ["streaming.*kafka", "kafka.*broker", "topics.*kafka", "kafka.*producer", "kafka.*consumer"]
     }
   },
   "databases": {
@@ -156,11 +156,11 @@
     },
     "redis": {
       "synonyms": ["redis"],
-      "context_patterns": ["cache", "key-value", "base de données en mémoire"]
+      "context_patterns": ["cache.*redis", "redis.*mémoire", "key-value.*redis", "redis.*pub/sub", "base.*redis"]
     },
     "elasticsearch": {
       "synonyms": ["elasticsearch", "elastic", "es"],
-      "context_patterns": ["moteur de recherche", "indexation"]
+      "context_patterns": ["elasticsearch.*recherche", "elk stack", "elastic.*search", "kibana.*elastic", "index.*elasticsearch"]
     },
     "oracle": {
       "synonyms": ["oracle", "oracle db"],
@@ -172,11 +172,11 @@
     },
     "snowflake": {
       "synonyms": ["snowflake"],
-      "context_patterns": ["data warehouse", "entrepôt de données"]
+      "context_patterns": ["data warehouse snowflake", "plateforme snowflake"]
     },
     "bigquery": {
       "synonyms": ["bigquery", "big query"],
-      "context_patterns": ["data warehouse", "google cloud", "entrepôt de données"]
+      "context_patterns": ["bigquery.*warehouse", "entrepôt.*bigquery"]
     }
   },
   "cloud": {
@@ -202,33 +202,33 @@
     },
     "terraform": {
       "synonyms": ["terraform"],
-      "context_patterns": ["infrastructure as code", "iac", "automatisation infrastructure"]
+      "context_patterns": ["infrastructure as code", "terraform.*cloud", "modules.*terraform", "terraform.*provisioning", "iac.*terraform"]
     },
     "ansible": {
       "synonyms": ["ansible"],
-      "context_patterns": ["automatisation", "configuration management", "déploiement"]
+      "context_patterns": ["automatisation.*ansible", "playbooks.*ansible", "rôles.*ansible", "ansible.*configuration", "inventaire.*ansible"]
     }
   },
   "bi_analytics": {
     "power bi": {
       "synonyms": ["power bi", "powerbi"],
-      "context_patterns": ["visualisation de données", "tableaux de bord", "reporting.*bi", "reporting.*décisionnel", "reporting.*analytique"]
+      "context_patterns": ["dashboards.*power bi", "rapports.*power bi", "power bi.*desktop", "dax.*power bi", "power query"]
     },
     "tableau": {
       "synonyms": ["tableau", "tableau software"],
-      "context_patterns": ["visualisation de données", "tableaux de bord.*données", "reporting.*bi", "reporting.*décisionnel"]
+      "context_patterns": ["tableau.*desktop", "tableau.*server", "visualisations.*tableau", "dashboards.*tableau", "tableau prep"]
     },
     "looker": {
       "synonyms": ["looker"],
-      "context_patterns": ["visualisation de données", "business intelligence"]
+      "context_patterns": ["looker.*studio", "lookml", "requêtes.*looker", "dashboards.*looker", "google.*looker"]
     },
     "qlik": {
       "synonyms": ["qlik", "qliksense", "qlik sense"],
-      "context_patterns": ["visualisation de données", "business intelligence"]
+      "context_patterns": ["qlik sense", "qlikview", "qlik.*cloud", "applications.*qlik", "qlik.*associative"]
     },
     "dbt": {
       "synonyms": ["dbt", "data build tool"],
-      "context_patterns": ["transformation de données", "data engineering"]
+      "context_patterns": ["modèles.*dbt", "transformations.*dbt", "dbt.*cloud", "dbt.*core", "tests.*dbt"]
     }
   },
   "methodologies": {
@@ -268,19 +268,19 @@
     },
     "confluence": {
       "synonyms": ["confluence"],
-      "context_patterns": ["documentation", "wiki", "collaboration"]
+      "context_patterns": ["wiki.*confluence", "documentation.*confluence", "espace.*confluence"]
     },
     "jenkins": {
       "synonyms": ["jenkins"],
-      "context_patterns": ["ci/cd", "intégration continue", "déploiement continu"]
+      "context_patterns": ["pipeline.*jenkins", "jobs.*jenkins", "jenkins.*ci", "jenkinsfile", "serveur.*jenkins"]
     },
     "gitlab": {
       "synonyms": ["gitlab", "gitlab ci"],
-      "context_patterns": ["ci/cd", "devops", "gestion de code"]
+      "context_patterns": ["pipeline.*gitlab", "gitlab.*runner", "merge.*gitlab", "gitlab.*repository", "gitlab.*ci"]
     },
     "github": {
       "synonyms": ["github", "github actions"],
-      "context_patterns": ["ci/cd", "devops", "gestion de code"]
+      "context_patterns": ["github actions", "workflow.*github", "github.*repository", "pull request.*github", "github.*ci"]
     },
     "ms project": {
       "synonyms": ["ms project", "microsoft project", "project"],
