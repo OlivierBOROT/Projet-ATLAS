@@ -42,6 +42,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "modules"))
 from text_cleaner import TextCleaner
 from skill_extractor import SkillExtractor
 from info_extractor import InfoExtractor
+from sentence_transformers import SentenceTransformer
 
 # Forcer l'encodage UTF-8 pour stdout/stderr sur Windows AVANT la configuration du logging
 if sys.platform == "win32":
@@ -78,11 +79,16 @@ class OfferEnricher:
         self.cleaner = TextCleaner()
         self.skill_extractor = SkillExtractor()
         self.info_extractor = InfoExtractor()
+        logger.info("⏳ Chargement du modèle d'embeddings...")
+        self.embedding_model = SentenceTransformer(
+            "paraphrase-multilingual-MiniLM-L12-v2"
+        )
         logger.info("✅ Modules NLP initialisés")
         logger.info(
             f"   - {len(self.skill_extractor.all_tech_skills)} compétences tech"
         )
         logger.info(f"   - {len(self.skill_extractor.soft_skills)} soft skills")
+        logger.info(f"   - Modèle d'embedding: paraphrase-multilingual-MiniLM-L12-v2")
 
     def process_offer(self, offer_id, description):
         """
@@ -115,9 +121,13 @@ class OfferEnricher:
             # 3. EXTRACTION INFOS
             info = self.info_extractor.extract_all(description)
 
+            # 4. CALCUL DE L'EMBEDDING
+            embedding = self.embedding_model.encode(description_cleaned)
+
             return {
                 "offer_id": offer_id,
                 "description_cleaned": description_cleaned,
+                "embedding": embedding.tolist(),
                 "skills_tech": skills["all_tech_skills"],
                 "skills_soft": skills["soft_skills"],
                 "profile_category": category["dominant_profile"],
@@ -227,6 +237,24 @@ class OfferEnricher:
                 """,
                     (result["offer_id"], skill),
                 )
+
+            # 6. Insertion de l'embedding dans job_embeddings
+            cursor.execute(
+                """
+                INSERT INTO job_embeddings (offer_id, embedding, model_name, created_at)
+                VALUES (%s, %s, %s, NOW())
+                ON CONFLICT (offer_id) 
+                DO UPDATE SET 
+                    embedding = EXCLUDED.embedding,
+                    model_name = EXCLUDED.model_name,
+                    created_at = NOW()
+                """,
+                (
+                    result["offer_id"],
+                    result["embedding"],
+                    "paraphrase-multilingual-MiniLM-L12-v2",
+                ),
+            )
 
             conn.commit()
             cursor.close()
