@@ -1,0 +1,320 @@
+{
+  "languages": {
+    "python": {
+      "synonyms": ["python", "python3", "py"],
+      "context_patterns": ["développement python", "scripts python", "programmation python"]
+    },
+    "java": {
+      "synonyms": ["java", "jdk", "jee", "j2ee"],
+      "context_patterns": ["développement java", "programmation java"]
+    },
+    "javascript": {
+      "synonyms": ["javascript", "js", "ecmascript"],
+      "context_patterns": ["développement javascript", "programmation javascript", "front-end"]
+    },
+    "typescript": {
+      "synonyms": ["typescript", "ts"],
+      "context_patterns": ["développement typescript"]
+    },
+    "php": {
+      "synonyms": ["php", "php7", "php8"],
+      "context_patterns": ["développement php", "programmation php"]
+    },
+    "c++": {
+      "synonyms": ["c++", "cpp"],
+      "context_patterns": ["développement c\\+\\+", "programmation c\\+\\+"]
+    },
+    "c#": {
+      "synonyms": ["c#", "csharp", "c sharp"],
+      "context_patterns": ["développement c#", "programmation .net"]
+    },
+    "sql": {
+      "synonyms": ["sql", "t-sql", "pl/sql", "pl sql"],
+      "context_patterns": [
+        "langages?(\\s+de)?\\s+requêtes?",
+        "requêtes?\\s+sql",
+        "bases?\\s+de\\s+données\\s+relationnelles?",
+        "modélisation.*données.*requêtes?",
+        "principes\\s+de\\s+modélisation.*langages?"
+      ]
+    },
+    "ruby": {
+      "synonyms": ["ruby"],
+      "context_patterns": ["développement ruby", "programmation ruby"]
+    },
+    "go": {
+      "synonyms": ["go", "golang"],
+      "context_patterns": ["développement go", "programmation go", "golang"]
+    },
+    "rust": {
+      "synonyms": ["rust"],
+      "context_patterns": ["développement rust", "programmation rust"]
+    },
+    "swift": {
+      "synonyms": ["swift"],
+      "context_patterns": ["développement swift", "ios", "développement mobile"]
+    },
+    "kotlin": {
+      "synonyms": ["kotlin"],
+      "context_patterns": ["développement kotlin", "android", "développement mobile"]
+    },
+    "scala": {
+      "synonyms": ["scala"],
+      "context_patterns": ["développement scala", "programmation scala"]
+    },
+    "r": {
+      "synonyms": ["r", "langage r"],
+      "context_patterns": ["statistiques avec r", "analyse de données avec r"]
+    },
+    "shell": {
+      "synonyms": ["shell", "bash", "sh"],
+      "context_patterns": ["scripts shell", "scripting bash"]
+    },
+    "powershell": {
+      "synonyms": ["powershell", "pwsh"],
+      "context_patterns": ["scripts powershell", "administration windows"]
+    }
+  },
+  "frameworks": {
+    "react": {
+      "synonyms": ["react", "reactjs", "react.js"],
+      "context_patterns": ["développement react", "frontend react"]
+    },
+    "angular": {
+      "synonyms": ["angular", "angularjs"],
+      "context_patterns": ["développement angular", "frontend angular"]
+    },
+    "vue": {
+      "synonyms": ["vue", "vuejs", "vue.js"],
+      "context_patterns": ["développement vue", "frontend vue"]
+    },
+    "django": {
+      "synonyms": ["django"],
+      "context_patterns": ["développement django", "framework django", "backend python"]
+    },
+    "flask": {
+      "synonyms": ["flask"],
+      "context_patterns": ["développement flask", "framework flask", "microframework python"]
+    },
+    "fastapi": {
+      "synonyms": ["fastapi", "fast api"],
+      "context_patterns": ["développement fastapi", "api python"]
+    },
+    "spring": {
+      "synonyms": ["spring", "spring boot", "springboot"],
+      "context_patterns": ["développement spring", "framework spring", "backend java"]
+    },
+    "node.js": {
+      "synonyms": ["node.js", "nodejs", "node"],
+      "context_patterns": ["développement node", "backend javascript"]
+    },
+    "laravel": {
+      "synonyms": ["laravel"],
+      "context_patterns": ["développement laravel", "framework php"]
+    },
+    ".net": {
+      "synonyms": [".net", "dotnet", "asp.net", "asp net"],
+      "context_patterns": ["développement .net", "framework .net", "architecture .net"]
+    },
+    "tensorflow": {
+      "synonyms": ["tensorflow", "tf"],
+      "context_patterns": ["machine learning", "deep learning", "apprentissage automatique"]
+    },
+    "pytorch": {
+      "synonyms": ["pytorch", "torch"],
+      "context_patterns": ["machine learning", "deep learning", "apprentissage automatique"]
+    },
+    "pandas": {
+      "synonyms": ["pandas"],
+      "context_patterns": ["analyse de données", "manipulation de données", "data science"]
+    },
+    "spark": {
+      "synonyms": ["spark", "apache spark", "pyspark"],
+      "context_patterns": ["big data", "traitement distribué", "data engineering"]
+    },
+    "airflow": {
+      "synonyms": ["airflow", "apache airflow"],
+      "context_patterns": ["orchestration", "workflow", "pipeline de données"]
+    },
+    "kafka": {
+      "synonyms": ["kafka", "apache kafka"],
+      "context_patterns": ["streaming", "messages", "événements"]
+    }
+  },
+  "databases": {
+    "postgresql": {
+      "synonyms": ["postgresql", "postgres", "psql"],
+      "context_patterns": ["base de données postgresql", "sgbd postgres"]
+    },
+    "mysql": {
+      "synonyms": ["mysql"],
+      "context_patterns": ["base de données mysql", "sgbd mysql"]
+    },
+    "mongodb": {
+      "synonyms": ["mongodb", "mongo"],
+      "context_patterns": ["base de données nosql", "sgbd mongodb"]
+    },
+    "redis": {
+      "synonyms": ["redis"],
+      "context_patterns": ["cache", "key-value", "base de données en mémoire"]
+    },
+    "elasticsearch": {
+      "synonyms": ["elasticsearch", "elastic", "es"],
+      "context_patterns": ["moteur de recherche", "indexation"]
+    },
+    "oracle": {
+      "synonyms": ["oracle", "oracle db"],
+      "context_patterns": ["base de données oracle", "sgbd oracle"]
+    },
+    "sql server": {
+      "synonyms": ["sql server", "mssql", "microsoft sql"],
+      "context_patterns": ["base de données sql server", "sgbd microsoft"]
+    },
+    "snowflake": {
+      "synonyms": ["snowflake"],
+      "context_patterns": ["data warehouse", "entrepôt de données"]
+    },
+    "bigquery": {
+      "synonyms": ["bigquery", "big query"],
+      "context_patterns": ["data warehouse", "google cloud", "entrepôt de données"]
+    }
+  },
+  "cloud": {
+    "aws": {
+      "synonyms": ["aws", "amazon web services"],
+      "context_patterns": ["cloud aws", "infrastructure aws", "services aws"]
+    },
+    "azure": {
+      "synonyms": ["azure", "microsoft azure"],
+      "context_patterns": ["cloud azure", "infrastructure azure", "services azure"]
+    },
+    "gcp": {
+      "synonyms": ["gcp", "google cloud", "google cloud platform"],
+      "context_patterns": ["cloud gcp", "infrastructure google", "services google cloud"]
+    },
+    "kubernetes": {
+      "synonyms": ["kubernetes", "k8s"],
+      "context_patterns": ["orchestration de conteneurs", "infrastructure kubernetes"]
+    },
+    "docker": {
+      "synonyms": ["docker", "conteneurs"],
+      "context_patterns": ["conteneurisation", "docker containers"]
+    },
+    "terraform": {
+      "synonyms": ["terraform"],
+      "context_patterns": ["infrastructure as code", "iac", "automatisation infrastructure"]
+    },
+    "ansible": {
+      "synonyms": ["ansible"],
+      "context_patterns": ["automatisation", "configuration management", "déploiement"]
+    }
+  },
+  "bi_analytics": {
+    "power bi": {
+      "synonyms": ["power bi", "powerbi"],
+      "context_patterns": ["visualisation de données", "tableaux de bord", "reporting.*bi", "reporting.*décisionnel", "reporting.*analytique"]
+    },
+    "tableau": {
+      "synonyms": ["tableau", "tableau software"],
+      "context_patterns": ["visualisation de données", "tableaux de bord.*données", "reporting.*bi", "reporting.*décisionnel"]
+    },
+    "looker": {
+      "synonyms": ["looker"],
+      "context_patterns": ["visualisation de données", "business intelligence"]
+    },
+    "qlik": {
+      "synonyms": ["qlik", "qliksense", "qlik sense"],
+      "context_patterns": ["visualisation de données", "business intelligence"]
+    },
+    "dbt": {
+      "synonyms": ["dbt", "data build tool"],
+      "context_patterns": ["transformation de données", "data engineering"]
+    }
+  },
+  "methodologies": {
+    "agile": {
+      "synonyms": ["agile", "agilité", "méthodologie agile", "méthode agile"],
+      "context_patterns": ["méthodologies?\\s+agiles?", "approche\\s+agile", "gestion\\s+agile"]
+    },
+    "scrum": {
+      "synonyms": ["scrum"],
+      "context_patterns": ["méthodologie scrum", "framework scrum", "sprint"]
+    },
+    "safe": {
+      "synonyms": ["safe", "scaled agile"],
+      "context_patterns": ["méthodologie safe", "framework safe", "scaled agile framework"]
+    },
+    "kanban": {
+      "synonyms": ["kanban"],
+      "context_patterns": ["méthodologie kanban", "tableau kanban"]
+    },
+    "v model": {
+      "synonyms": ["cycle en v", "modèle en v", "v model", "méthode en v"],
+      "context_patterns": ["méthodologie.*v", "cycle de développement en v"]
+    },
+    "devops": {
+      "synonyms": ["devops", "dev ops"],
+      "context_patterns": ["culture devops", "pratiques devops"]
+    }
+  },
+  "tools": {
+    "git": {
+      "synonyms": ["git", "version control"],
+      "context_patterns": ["gestion de versions", "contrôle de versions"]
+    },
+    "jira": {
+      "synonyms": ["jira", "atlassian jira"],
+      "context_patterns": ["suivi de tickets", "outils.*jira", "outils.*gestion.*projets", "plateforme.*agile"]
+    },
+    "confluence": {
+      "synonyms": ["confluence"],
+      "context_patterns": ["documentation", "wiki", "collaboration"]
+    },
+    "jenkins": {
+      "synonyms": ["jenkins"],
+      "context_patterns": ["ci/cd", "intégration continue", "déploiement continu"]
+    },
+    "gitlab": {
+      "synonyms": ["gitlab", "gitlab ci"],
+      "context_patterns": ["ci/cd", "devops", "gestion de code"]
+    },
+    "github": {
+      "synonyms": ["github", "github actions"],
+      "context_patterns": ["ci/cd", "devops", "gestion de code"]
+    },
+    "ms project": {
+      "synonyms": ["ms project", "microsoft project", "project"],
+      "context_patterns": ["planification.*projets", "outils.*project", "diagramme.*gantt"]
+    },
+    "redmine": {
+      "synonyms": ["redmine"],
+      "context_patterns": ["suivi de tickets", "outils.*redmine", "plateforme.*projets"]
+    }
+  },
+  "data_concepts": {
+    "data engineering": {
+      "synonyms": ["data engineering", "ingénierie de données", "ingénierie des données"],
+      "context_patterns": ["pipeline.*données", "architecture.*données", "plateforme.*data"]
+    },
+    "data architecture": {
+      "synonyms": ["architecture data", "architectures data", "architecture de données"],
+      "context_patterns": ["architectures?\\s+data", "conception.*données", "modélisation.*système"]
+    },
+    "data modeling": {
+      "synonyms": ["modélisation de données", "modélisation des données", "data modeling"],
+      "context_patterns": ["principes de modélisation", "conception de modèles", "schéma de données"]
+    },
+    "etl": {
+      "synonyms": ["etl", "extract transform load"],
+      "context_patterns": ["extraction transformation chargement", "pipeline etl"]
+    },
+    "machine learning": {
+      "synonyms": ["machine learning", "ml", "apprentissage automatique"],
+      "context_patterns": ["algorithmes.*machine learning", "modèles.*ml"]
+    },
+    "big data": {
+      "synonyms": ["big data", "données massives"],
+      "context_patterns": ["traitement.*big data", "analyse.*big data"]
+    }
+  }
+}

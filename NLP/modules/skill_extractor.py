@@ -6,11 +6,14 @@ Module d'extraction des compétences techniques et soft skills depuis les offres
 Fonctionnalités :
 - Détection des compétences techniques (langages, frameworks, outils)
 - Détection des soft skills
-- Détection des certifications
+- Détection contextuelle avec patterns
 - Scoring de pertinence
 """
 
 import re
+import json
+import os
+from pathlib import Path
 from typing import List, Dict, Set
 from collections import Counter
 
@@ -19,372 +22,65 @@ class SkillExtractor:
     """Classe pour extraire les compétences depuis les descriptions d'offres"""
 
     def __init__(self):
-        """Initialise les dictionnaires de compétences"""
+        """Initialise les dictionnaires de compétences depuis les fichiers JSON"""
 
-        # ============================================
-        # COMPÉTENCES TECHNIQUES
-        # ============================================
+        # Charger les fichiers JSON
+        data_dir = Path(__file__).parent.parent / "data"
 
-        # Langages de programmation
-        self.languages = {
-            "python",
-            "java",
-            "javascript",
-            "js",
-            "typescript",
-            "ts",
-            "php",
-            "c++",
-            "c#",
-            "csharp",
-            "c",
-            "ruby",
-            "go",
-            "golang",
-            "rust",
-            "swift",
-            "kotlin",
-            "scala",
-            "r",
-            "matlab",
-            "perl",
-            "shell",
-            "bash",
-            "powershell",
-            "sql",
-            "pl/sql",
-        }
+        with open(data_dir / "skills_tech.json", "r", encoding="utf-8") as f:
+            self.tech_skills_data = json.load(f)
 
-        # Frameworks & Bibliothèques
-        self.frameworks = {
-            # Frontend
-            "react",
-            "angular",
-            "vue",
-            "vuejs",
-            "svelte",
-            "next.js",
-            "nextjs",
-            "jquery",
-            "bootstrap",
-            "tailwind",
-            "material-ui",
-            "mui",
-            # Backend
-            "django",
-            "flask",
-            "fastapi",
-            "spring",
-            "spring boot",
-            "springboot",
-            "express",
-            "express.js",
-            "node.js",
-            "nodejs",
-            "nest.js",
-            "nestjs",
-            "laravel",
-            "symfony",
-            "rails",
-            "ruby on rails",
-            ".net",
-            "dotnet",
-            "asp.net",
-            # Data Science / ML
-            "tensorflow",
-            "pytorch",
-            "keras",
-            "scikit-learn",
-            "sklearn",
-            "pandas",
-            "numpy",
-            "scipy",
-            "matplotlib",
-            "seaborn",
-            "plotly",
-            "spark",
-            "pyspark",
-            "hadoop",
-            "airflow",
-            "kafka",
-            "hugging face",
-            "transformers",
-            "langchain",
-        }
+        with open(data_dir / "skills_soft.json", "r", encoding="utf-8") as f:
+            self.soft_skills_data = json.load(f)
 
-        # Bases de données
-        self.databases = {
-            "postgresql",
-            "postgres",
-            "mysql",
-            "mariadb",
-            "sql server",
-            "mssql",
-            "oracle",
-            "mongodb",
-            "cassandra",
-            "redis",
-            "elasticsearch",
-            "elastic",
-            "neo4j",
-            "dynamodb",
-            "firebase",
-            "supabase",
-            "snowflake",
-            "bigquery",
-            "redshift",
-            "sqlite",
-        }
+        # Construire les sets pour la compatibilité avec le code existant
+        self._build_skill_sets()
 
-        # Cloud & Infrastructure
-        self.cloud = {
-            "aws",
-            "amazon web services",
-            "azure",
-            "microsoft azure",
-            "gcp",
-            "google cloud",
-            "google cloud platform",
-            "alibaba cloud",
-            "s3",
-            "ec2",
-            "lambda",
-            "cloudfront",
-            "rds",
-            "dynamodb",
-            "kubernetes",
-            "k8s",
-            "docker",
-            "openshift",
-            "helm",
-            "terraform",
-            "ansible",
-            "jenkins",
-            "gitlab ci",
-            "github actions",
-            "circleci",
-            "travis",
-            "argocd",
-            "prometheus",
-            "grafana",
-        }
+    def _build_skill_sets(self):
+        """Construit les sets de skills à partir des données JSON"""
 
-        # DevOps & Outils
-        self.devops = {
-            "git",
-            "github",
-            "gitlab",
-            "bitbucket",
-            "svn",
-            "ci/cd",
-            "devops",
-            "sre",
-            "iac",
-            "infrastructure as code",
-            "docker",
-            "kubernetes",
-            "ansible",
-            "terraform",
-            "vagrant",
-            "jenkins",
-            "travis",
-            "bamboo",
-            "teamcity",
-            "nginx",
-            "apache",
-            "tomcat",
-            "linux",
-            "unix",
-            "windows server",
-        }
+        # Skills techniques
+        self.languages = set()
+        self.frameworks = set()
+        self.databases = set()
+        self.cloud = set()
+        self.bi = set()
+        self.methods = set()
+        self.devops = set()
+        self.tools = set()
+        self.data_concepts = set()
+        self.security = set()
+        self.business_software = set()
 
-        # BI & Analytics
-        self.bi = {
-            "power bi",
-            "powerbi",
-            "tableau",
-            "looker",
-            "qlik",
-            "qliksense",
-            "datastudio",
-            "metabase",
-            "superset",
-            "dbt",
-            "talend",
-            "informatica",
-            "sap",
-            "sap bo",
-            "business objects",
-            "cognos",
-        }
+        # Parcourir les skills techniques et ajouter tous les synonymes
+        for category, skills in self.tech_skills_data.items():
+            for skill_name, skill_data in skills.items():
+                # Déterminer le set cible
+                if category == "bi_analytics":
+                    target_set = self.bi
+                elif category == "methodologies":
+                    target_set = self.methods
+                elif category == "data_concepts":
+                    target_set = self.data_concepts
+                else:
+                    target_set = getattr(self, category, set())
 
-        # Méthodes & Concepts
-        self.methods = {
-            "agile",
-            "scrum",
-            "kanban",
-            "safe",
-            "devops",
-            "lean",
-            "ci/cd",
-            "tdd",
-            "bdd",
-            "pair programming",
-            "code review",
-            "microservices",
-            "api rest",
-            "restful",
-            "graphql",
-            "grpc",
-            "mvc",
-            "mvvm",
-            "clean architecture",
-            "solid",
-            "design patterns",
-            "machine learning",
-            "deep learning",
-            "nlp",
-            "computer vision",
-            "data science",
-            "big data",
-            "etl",
-            "elt",
-            "data engineering",
-        }
+                # Ajouter le nom principal et tous les synonymes
+                target_set.add(skill_name.lower())
+                for synonym in skill_data["synonyms"]:
+                    target_set.add(synonym.lower())
 
-        # Sécurité & Certifications
-        self.security = {
-            "cybersécurité",
-            "cybersecurite",
-            "sécurité",
-            "securite",
-            "owasp",
-            "pen test",
-            "pentest",
-            "ethical hacking",
-            "soc",
-            "siem",
-            "firewall",
-            "vpn",
-            "ssl",
-            "tls",
-            "rgpd",
-            "gdpr",
-            "iso 27001",
-            "pci dss",
-        }
+        # Skills soft
+        self.soft_skills = set()
+        for category, skills in self.soft_skills_data.items():
+            for skill_name, skill_data in skills.items():
+                # Ajouter le nom principal
+                self.soft_skills.add(skill_name.lower())
+                # Ajouter tous les synonymes
+                for synonym in skill_data["synonyms"]:
+                    self.soft_skills.add(synonym.lower())
 
-        # ERP / CRM / Logiciels métier
-        self.business_software = {
-            "salesforce",
-            "sap",
-            "oracle",
-            "dynamics",
-            "odoo",
-            "servicenow",
-            "workday",
-            "jira",
-            "confluence",
-            "trello",
-            "monday",
-            "asana",
-            "notion",
-            "slack",
-            "teams",
-        }
-
-        # ============================================
-        # SOFT SKILLS
-        # ============================================
-
-        self.soft_skills = {
-            # Communication
-            "communication",
-            "écoute",
-            "ecoute",
-            "pédagogie",
-            "pedagogie",
-            "présentation",
-            "presentation",
-            "rédaction",
-            "redaction",
-            # Travail d'équipe
-            "esprit d'équipe",
-            "esprit d'equipe",
-            "collaboration",
-            "coopération",
-            "cooperation",
-            "travail en équipe",
-            "travail en equipe",
-            "team work",
-            "teamwork",
-            # Autonomie & Organisation
-            "autonomie",
-            "autonome",
-            "initiative",
-            "proactif",
-            "proactive",
-            "organisation",
-            "organisé",
-            "organise",
-            "rigueur",
-            "rigoureux",
-            "méthodique",
-            "methodique",
-            "structuré",
-            "structure",
-            # Adaptation
-            "adaptabilité",
-            "adaptabilite",
-            "flexible",
-            "flexibilité",
-            "flexibilite",
-            "polyvalence",
-            "polyvalent",
-            "agilité",
-            "agilite",
-            "curiosité",
-            "curiosite",
-            # Leadership
-            "leadership",
-            "management",
-            "encadrement",
-            "mentor",
-            "mentoring",
-            "coaching",
-            "motivation",
-            "fédérateur",
-            "federateur",
-            # Résolution de problèmes
-            "analytique",
-            "analyse",
-            "résolution de problèmes",
-            "resolution de problemes",
-            "problem solving",
-            "créatif",
-            "creatif",
-            "créativité",
-            "creativite",
-            "innovation",
-            "innovant",
-            # Qualités personnelles
-            "passion",
-            "passionné",
-            "passionne",
-            "motivation",
-            "motivé",
-            "motive",
-            "dynamique",
-            "dynamisme",
-            "enthousiasme",
-            "persévérance",
-            "perseverance",
-            "patience",
-            "diplomatie",
-            "empathie",
-        }
-
-        # Toutes les compétences techniques regroupées
+        # Regrouper toutes les skills techniques
         self.all_tech_skills = (
             self.languages
             | self.frameworks
@@ -393,9 +89,30 @@ class SkillExtractor:
             | self.devops
             | self.bi
             | self.methods
+            | self.tools
+            | self.data_concepts
             | self.security
             | self.business_software
         )
+
+        # Construire le mapping skill -> patterns pour la détection contextuelle
+        self.skill_patterns = {}
+
+        # Patterns tech
+        for category, skills in self.tech_skills_data.items():
+            for skill_name, skill_data in skills.items():
+                if skill_data.get("context_patterns"):
+                    self.skill_patterns[skill_name.lower()] = skill_data[
+                        "context_patterns"
+                    ]
+
+        # Patterns soft
+        for category, skills in self.soft_skills_data.items():
+            for skill_name, skill_data in skills.items():
+                if skill_data.get("context_patterns"):
+                    self.skill_patterns[skill_name.lower()] = skill_data[
+                        "context_patterns"
+                    ]
 
     def extract_skills(self, text: str) -> Dict[str, List[str]]:
         """
@@ -412,6 +129,7 @@ class SkillExtractor:
 
         text_lower = text.lower()
 
+        # 1. Détection directe par mots-clés
         result = {
             "languages": self._find_skills(text_lower, self.languages),
             "frameworks": self._find_skills(text_lower, self.frameworks),
@@ -424,6 +142,14 @@ class SkillExtractor:
             "business_software": self._find_skills(text_lower, self.business_software),
             "soft_skills": self._find_skills(text_lower, self.soft_skills),
         }
+
+        # 2. Détection contextuelle via patterns
+        contextual_skills = self._find_skills_by_context(text_lower)
+
+        # Fusionner les résultats contextuels avec les résultats directs
+        for category, skills in contextual_skills.items():
+            if category in result:
+                result[category] = sorted(set(result[category] + skills))
 
         # Ajouter un résumé
         result["all_tech_skills"] = sorted(
@@ -447,6 +173,93 @@ class SkillExtractor:
         }
 
         return result
+
+    def _find_skills_by_context(self, text: str) -> Dict[str, List[str]]:
+        """
+        Détecte les skills via des patterns contextuels
+
+        Par exemple: "langages de requêtes" → détecte SQL
+        "modélisation de données" → détecte SQL
+
+        Args:
+            text: Texte en minuscules
+
+        Returns:
+            Dictionnaire avec skills détectées par catégorie
+        """
+        found_skills = {
+            "languages": [],
+            "frameworks": [],
+            "databases": [],
+            "cloud": [],
+            "devops": [],
+            "bi": [],
+            "methods": [],
+            "security": [],
+            "business_software": [],
+            "soft_skills": [],
+            "tools": [],
+            "data_concepts": [],
+        }
+
+        # Parcourir tous les patterns définis
+        for skill_name, patterns in self.skill_patterns.items():
+            for pattern in patterns:
+                try:
+                    # Recherche avec regex (pattern déjà défini comme regex dans le JSON)
+                    if re.search(pattern, text, re.IGNORECASE):
+                        # Déterminer la catégorie de la skill
+                        category = self._get_skill_category(skill_name)
+                        if category and skill_name not in found_skills[category]:
+                            found_skills[category].append(skill_name)
+                        break  # Une fois trouvé, pas besoin de continuer
+                except re.error as e:
+                    # Si le pattern est invalide, ignorer
+                    continue
+
+        return found_skills
+
+    def _get_skill_category(self, skill_name: str) -> str:
+        """Détermine la catégorie d'une skill"""
+        skill_lower = skill_name.lower()
+
+        if skill_lower in self.languages:
+            return "languages"
+        elif skill_lower in self.frameworks:
+            return "frameworks"
+        elif skill_lower in self.databases:
+            return "databases"
+        elif skill_lower in self.cloud:
+            return "cloud"
+        elif skill_lower in self.devops:
+            return "devops"
+        elif skill_lower in self.bi:
+            return "bi"
+        elif skill_lower in self.methods:
+            return "methods"
+        elif skill_lower in self.security:
+            return "security"
+        elif skill_lower in self.business_software:
+            return "business_software"
+        elif skill_lower in self.soft_skills:
+            return "soft_skills"
+
+        # Si la skill n'est pas dans les sets, chercher dans les données JSON
+        for category, skills in self.tech_skills_data.items():
+            if skill_name in skills:
+                # Mapper le nom de catégorie JSON au nom utilisé
+                category_map = {
+                    "bi_analytics": "bi",
+                    "methodologies": "methods",
+                    "data_concepts": "methods",  # On met data concepts dans methods
+                }
+                return category_map.get(category, category)
+
+        for category, skills in self.soft_skills_data.items():
+            if skill_name in skills:
+                return "soft_skills"
+
+        return None
 
     def _find_skills(self, text: str, skill_set: Set[str]) -> List[str]:
         """
