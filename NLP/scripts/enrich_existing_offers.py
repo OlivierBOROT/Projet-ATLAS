@@ -42,7 +42,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "modules"))
 from text_cleaner import TextCleaner
 from skill_extractor import SkillExtractor
 from info_extractor import InfoExtractor
-from sentence_transformers import SentenceTransformer
+from embedding_generator import EmbeddingGenerator
 
 # Forcer l'encodage UTF-8 pour stdout/stderr sur Windows AVANT la configuration du logging
 if sys.platform == "win32":
@@ -80,15 +80,16 @@ class OfferEnricher:
         self.skill_extractor = SkillExtractor()
         self.info_extractor = InfoExtractor()
         logger.info("⏳ Chargement du modèle d'embeddings...")
-        self.embedding_model = SentenceTransformer(
-            "paraphrase-multilingual-MiniLM-L12-v2"
-        )
+        self.embedding_gen = EmbeddingGenerator()
+        model_info = self.embedding_gen.get_model_info()
         logger.info("✅ Modules NLP initialisés")
         logger.info(
             f"   - {len(self.skill_extractor.all_tech_skills)} compétences tech"
         )
         logger.info(f"   - {len(self.skill_extractor.soft_skills)} soft skills")
-        logger.info(f"   - Modèle d'embedding: paraphrase-multilingual-MiniLM-L12-v2")
+        logger.info(
+            f"   - Modèle d'embedding: {model_info['model_name']} ({model_info['embedding_dimension']} dim)"
+        )
 
     def process_offer(self, offer_id, description):
         """
@@ -122,7 +123,7 @@ class OfferEnricher:
             info = self.info_extractor.extract_all(description)
 
             # 4. CALCUL DE L'EMBEDDING
-            embedding = self.embedding_model.encode(description_cleaned)
+            embedding = self.embedding_gen.generate(description_cleaned)
 
             return {
                 "offer_id": offer_id,

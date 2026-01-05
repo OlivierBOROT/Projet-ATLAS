@@ -15,7 +15,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "modules"))
 from text_cleaner import TextCleaner
 from skill_extractor import SkillExtractor
 from info_extractor import InfoExtractor
-from sentence_transformers import SentenceTransformer
+from embedding_generator import EmbeddingGenerator
 
 # Forcer l'encodage UTF-8 pour stdout/stderr sur Windows
 if sys.platform == "win32":
@@ -63,7 +63,7 @@ print("⏳ Initialisation des modules NLP...")
 cleaner = TextCleaner()
 skill_extractor = SkillExtractor()
 info_extractor = InfoExtractor()
-embedding_model = SentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2")
+embedding_gen = EmbeddingGenerator()
 print("✅ Modules initialisés\n")
 
 # Traiter l'offre
@@ -107,7 +107,7 @@ info = info_extractor.extract_all(description)
 
 # 4. CALCUL DE L'EMBEDDING
 print("\n🧠 Calcul de l'embedding...")
-embedding = embedding_model.encode(description_cleaned)
+embedding = embedding_gen.generate(description_cleaned)
 print(f"✅ Embedding calculé : vecteur de {len(embedding)} dimensions")
 
 print(f"\n📋 INFORMATIONS EXTRAITES :")
@@ -237,7 +237,7 @@ try:
             model_name = EXCLUDED.model_name,
             created_at = NOW()
         """,
-        (offer_id, embedding.tolist(), "paraphrase-multilingual-MiniLM-L12-v2"),
+        (offer_id, embedding.tolist(), embedding_gen.model_name),
     )
 
     conn.commit()
