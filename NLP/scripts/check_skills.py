@@ -54,19 +54,6 @@ if skills:
 else:
     print("\n❌ Aucune skill liée")
 
-# 4. Skills dans dim_skills qui correspondent
-print(f"\n🔍 Skills 'autonome', 'dynamisme', 'polyvalent' dans dim_skills:")
-cursor.execute(
-    """
-    SELECT skill_id, skill_name, skill_category 
-    FROM dim_skills 
-    WHERE skill_name IN ('autonome', 'dynamisme', 'polyvalent')
-    ORDER BY skill_name
-    """
-)
-for skill_id, skill_name, skill_cat in cursor.fetchall():
-    print(f"   - ID {skill_id}: {skill_name} ({skill_cat})")
-
 cursor.close()
 conn.close()
 
