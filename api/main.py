@@ -96,6 +96,8 @@ def get_offers(
     contract: Optional[str] = Query(None),
     profile: Optional[str] = Query(None),
     remote: Optional[str] = Query(None),
+    skills: Optional[str] = Query(None),
+    education: Optional[str] = Query(None),
     db: Session = Depends(get_db),
 ):
     """Récupère les offres avec pagination et filtres optionnels"""
@@ -127,6 +129,21 @@ def get_offers(
 
         if remote and remote.lower() == "true":
             where_clauses.append("f.remote_possible = TRUE")
+
+        if skills:
+            skill_list = skills.split(",")
+            skill_conditions = []
+            for i, skill in enumerate(skill_list):
+                skill_conditions.append(f":skill_{i} = ANY(f.skills_extracted)")
+                params[f"skill_{i}"] = skill.strip()
+            where_clauses.append(f"({' OR '.join(skill_conditions)})")
+
+        if education:
+            edu_levels = education.split(",")
+            placeholders = ",".join([f":edu_{i}" for i in range(len(edu_levels))])
+            where_clauses.append(f"f.education_level IN ({placeholders})")
+            for i, edu in enumerate(edu_levels):
+                params[f"edu_{i}"] = int(edu)
 
         where_sql = " AND " + " AND ".join(where_clauses) if where_clauses else ""
 
@@ -181,6 +198,8 @@ def count_offers(
     contract: Optional[str] = Query(None),
     profile: Optional[str] = Query(None),
     remote: Optional[str] = Query(None),
+    skills: Optional[str] = Query(None),
+    education: Optional[str] = Query(None),
     db: Session = Depends(get_db),
 ):
     """Compte le nombre total d'offres avec filtres optionnels"""
@@ -206,6 +225,19 @@ def count_offers(
 
         if remote and remote.lower() == "true":
             where_clauses.append("f.remote_possible = TRUE")
+
+        if skills:
+            skill_list = [s.strip() for s in skills.split(",")]
+            skill_conditions = []
+            for i, skill in enumerate(skill_list):
+                params[f"skill_{i}"] = skill
+                skill_conditions.append(f":skill_{i} = ANY(f.skills_extracted)")
+            where_clauses.append(f"({' OR '.join(skill_conditions)})")
+
+        if education:
+            edu_levels = [int(e) for e in education.split(",")]
+            where_clauses.append("f.education_level IN :education_levels")
+            params["education_levels"] = tuple(edu_levels)
 
         where_sql = " AND ".join(where_clauses) if where_clauses else "1=1"
 

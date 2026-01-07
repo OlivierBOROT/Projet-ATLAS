@@ -53,7 +53,96 @@ st.markdown(
         border-radius: 15px;
         font-size: 0.85rem;
     }
+    /* Navigation flottante en bas - une seule grande boîte blanche */
+    [data-testid="stHorizontalBlock"]:has(button[kind="secondary"]) {
+        position: fixed !important;
+        bottom: 20px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        background: white !important;
+        padding: 1rem !important;
+        border-radius: 10px !important;
+        z-index: 1000 !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 0.5rem !important;
+        width: auto !important;
+        margin-left: 0 !important;
+        transition: left 0.3s ease !important;
+    }
+    /* Supprimer les bordures et backgrounds des colonnes */
+    [data-testid="stHorizontalBlock"]:has(button[kind="secondary"]) [data-testid="column"] {
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+    }
+    [data-testid="stHorizontalBlock"]:has(button[kind="secondary"]) button:hover {
+        background: #e0e0e0 !important;
+    }
+    /* Input de page */
+    [data-testid="stHorizontalBlock"]:has(button[kind="secondary"]) input[type="number"] {
+        background: #f0f0f0 !important;
+        box-shadow: none !important;
+        border: 1px solid #d0d0d0 !important;
+        border-radius: 5px !important;
+        text-align: center !important;
+    }
+    /* Conteneur du number input */
+    [data-testid="stHorizontalBlock"]:has(button[kind="secondary"]) [data-testid="stNumberInput"] {
+        background: transparent !important;
+        box-shadow: none !important;
+        border: none !important;
+    }
+    /* Texte de page */
+    [data-testid="stHorizontalBlock"]:has(button[kind="secondary"]) [data-testid="stMarkdownContainer"] {
+        background: transparent !important;
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0.5rem !important;
+    }
+    /* Ajouter un padding en bas du contenu pour éviter que les offres soient cachées */
+    .main .block-container {
+        padding-bottom: 150px !important;
+    }
 </style>
+<script>
+    // Observer pour détecter les changements de la sidebar
+    function adjustNavigationPosition() {
+        const sidebar = document.querySelector('[data-testid="stSidebar"]');
+        const nav = document.querySelector('[data-testid="stHorizontalBlock"]:has(button[kind="secondary"])');
+        
+        if (sidebar && nav) {
+            const isExpanded = sidebar.getAttribute('aria-expanded') === 'true';
+            const sidebarWidth = sidebar.offsetWidth;
+            
+            if (isExpanded && sidebarWidth > 100) {
+                nav.style.left = `calc(50% + ${sidebarWidth / 2}px)`;
+            } else {
+                nav.style.left = '50%';
+            }
+        }
+    }
+    
+    // Observer les changements
+    const observer = new MutationObserver(adjustNavigationPosition);
+    const config = { attributes: true, childList: true, subtree: true };
+    
+    // Attendre que le DOM soit chargé
+    setTimeout(() => {
+        const sidebar = document.querySelector('[data-testid="stSidebar"]');
+        if (sidebar) {
+            observer.observe(sidebar, config);
+            observer.observe(document.body, config);
+        }
+        adjustNavigationPosition();
+    }, 500);
+    
+    // Ajuster aussi lors du redimensionnement
+    window.addEventListener('resize', adjustNavigationPosition);
+    setInterval(adjustNavigationPosition, 1000);
+</script>
 """,
     unsafe_allow_html=True,
 )
@@ -111,6 +200,33 @@ with st.sidebar:
     # Filtre télétravail
     remote_filter = st.checkbox("Télétravail possible uniquement")
 
+    # Filtre par compétences
+    skills_input = st.text_input(
+        "🛠️ Compétences (séparées par des virgules)",
+        placeholder="Ex: Python, SQL, Docker",
+    )
+    skills_filter = (
+        [s.strip() for s in skills_input.split(",") if s.strip()]
+        if skills_input
+        else []
+    )
+
+    # Filtre par formation
+    education_filter = st.multiselect(
+        "🎓 Niveau de formation",
+        [
+            ("Bac+2", 2),
+            ("Bac+3", 3),
+            ("Bac+4", 4),
+            ("Bac+5", 5),
+            ("Bac+6", 6),
+            ("Bac+8", 8),
+        ],
+        default=[],
+        format_func=lambda x: x[0],
+    )
+    education_levels = [e[1] for e in education_filter] if education_filter else []
+
     st.markdown("---")
 
     # Bouton reset
@@ -148,7 +264,14 @@ OFFERS_PER_PAGE = 50
 
 @st.cache_data(ttl=300)
 def load_offers_paginated(
-    page=1, limit=50, source=None, contract=None, profile=None, remote=None
+    page=1,
+    limit=50,
+    source=None,
+    contract=None,
+    profile=None,
+    remote=None,
+    skills=None,
+    education=None,
 ):
     """Charge les offres avec pagination et filtres"""
     try:
@@ -164,6 +287,10 @@ def load_offers_paginated(
             params["profile"] = ",".join(profile)
         if remote:
             params["remote"] = "true"
+        if skills:
+            params["skills"] = ",".join(skills)
+        if education:
+            params["education"] = ",".join([str(e) for e in education])
 
         response = requests.get(f"{API_URL}/api/offers", params=params, timeout=10)
         return response.json()
@@ -173,7 +300,9 @@ def load_offers_paginated(
 
 
 @st.cache_data(ttl=300)
-def count_total_offers(source=None, contract=None, profile=None, remote=None):
+def count_total_offers(
+    source=None, contract=None, profile=None, remote=None, skills=None, education=None
+):
     """Compte le nombre total d'offres avec filtres"""
     try:
         params = {}
@@ -185,6 +314,10 @@ def count_total_offers(source=None, contract=None, profile=None, remote=None):
             params["profile"] = ",".join(profile)
         if remote:
             params["remote"] = "true"
+        if skills:
+            params["skills"] = ",".join(skills)
+        if education:
+            params["education"] = ",".join([str(e) for e in education])
 
         response = requests.get(f"{API_URL}/api/offers/count", params=params, timeout=5)
         return response.json().get("total", 0)
@@ -197,9 +330,13 @@ sources = source_filter if source_filter else None
 contracts = contract_filter if contract_filter else None
 profiles = profile_filter if profile_filter else None
 remote = remote_filter if remote_filter else None
+skills = skills_filter if skills_filter else None
+education = education_levels if education_levels else None
 
 # Charger le nombre total d'offres avec filtres
-total_offers = count_total_offers(sources, contracts, profiles, remote)
+total_offers = count_total_offers(
+    sources, contracts, profiles, remote, skills, education
+)
 total_pages = max(1, (total_offers + OFFERS_PER_PAGE - 1) // OFFERS_PER_PAGE)
 
 # S'assurer que la page courante est valide
@@ -216,6 +353,8 @@ offers_data = load_offers_paginated(
     contract=contracts,
     profile=profiles,
     remote=remote,
+    skills=skills,
+    education=education,
 )
 
 offers = offers_data.get("offers", [])
@@ -324,63 +463,70 @@ else:
             st.markdown(description)
 
 # ============================================================================
-# PAGINATION
+# NAVIGATION FLOTTANTE
 # ============================================================================
 
-st.markdown("---")
+# Navigation flottante en bas de page
+with st.container():
+    col1, col2, col3, col4, col5 = st.columns([0.8, 0.8, 2, 0.8, 0.8])
 
-col_prev, col_info, col_next = st.columns([1, 2, 1])
+    with col1:
+        if st.button(
+            "⏪",
+            key="first",
+            disabled=(st.session_state.current_page <= 1),
+            help="Première page",
+        ):
+            st.session_state.current_page = 1
+            st.rerun()
 
-with col_prev:
-    if st.button(
-        "⬅️ Précédent",
-        use_container_width=True,
-        disabled=(st.session_state.current_page <= 1),
-    ):
-        st.session_state.current_page -= 1
-        st.rerun()
+    with col2:
+        if st.button(
+            "➖",
+            key="prev",
+            disabled=(st.session_state.current_page <= 1),
+            help="Page précédente",
+        ):
+            st.session_state.current_page -= 1
+            st.rerun()
 
-with col_info:
+    with col3:
+        page_input = st.number_input(
+            "Page",
+            min_value=1,
+            max_value=total_pages,
+            value=st.session_state.current_page,
+            key="page_nav",
+            label_visibility="collapsed",
+        )
+        if page_input != st.session_state.current_page:
+            st.session_state.current_page = page_input
+            st.rerun()
+
+    with col4:
+        if st.button(
+            "➕",
+            key="next",
+            disabled=(st.session_state.current_page >= total_pages),
+            help="Page suivante",
+        ):
+            st.session_state.current_page += 1
+            st.rerun()
+
+    with col5:
+        if st.button(
+            "⏩",
+            key="last",
+            disabled=(st.session_state.current_page >= total_pages),
+            help="Dernière page",
+        ):
+            st.session_state.current_page = total_pages
+            st.rerun()
+
     st.markdown(
-        f"<div style='text-align: center; padding: 0.5rem;'>Page {st.session_state.current_page} sur {total_pages}</div>",
+        f"<div style='text-align: center; padding: 0.5rem; color: #888;'>Page {st.session_state.current_page} / {total_pages}</div>",
         unsafe_allow_html=True,
     )
-
-with col_next:
-    if st.button(
-        "Suivant ➡️",
-        use_container_width=True,
-        disabled=(st.session_state.current_page >= total_pages),
-    ):
-        st.session_state.current_page += 1
-        st.rerun()
-
-# Navigation rapide
-st.markdown("---")
-st.markdown("**📍 Navigation rapide**")
-col_nav1, col_nav2, col_nav3 = st.columns(3)
-
-with col_nav1:
-    if st.button("⏮️ Première page", use_container_width=True):
-        st.session_state.current_page = 1
-        st.rerun()
-
-with col_nav2:
-    page_input = st.number_input(
-        "Aller à la page:",
-        min_value=1,
-        max_value=total_pages,
-        value=st.session_state.current_page,
-        key="page_jump",
-    )
-    if st.button("Aller", use_container_width=True):
-        st.session_state.current_page = page_input
-        st.rerun()
-
-with col_nav3:
-    if st.button("Dernière page ⏭️", use_container_width=True):
-        st.session_state.current_page = total_pages
-        st.rerun()
 
 # ============================================================================
 # FOOTER
