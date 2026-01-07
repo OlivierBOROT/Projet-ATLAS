@@ -121,6 +121,10 @@ st.markdown("---")
 # SIDEBAR - FILTRES
 # ============================================================================
 
+# Initialiser le compteur de reset si nécessaire
+if "reset_counter" not in st.session_state:
+    st.session_state.reset_counter = 0
+
 with st.sidebar:
     st.header("🔍 Filtres")
 
@@ -133,12 +137,16 @@ with st.sidebar:
         "Source",
         list(source_options.keys()),
         default=[],
+        key=f"filter_source_{st.session_state.reset_counter}",
     )
     source_filter = [source_options[s] for s in source_filter_display]
 
     # Filtre par type de contrat
     contract_filter = st.multiselect(
-        "Type de contrat", ["CDI", "CDD", "Intérim", "Stage", "Alternance"], default=[]
+        "Type de contrat",
+        ["CDI", "CDD", "Intérim", "Stage", "Alternance"],
+        default=[],
+        key=f"filter_contract_{st.session_state.reset_counter}",
     )
 
     # Filtre par profil (catégorie NLP)
@@ -158,15 +166,20 @@ with st.sidebar:
             "Généraliste",
         ],
         default=[],
+        key=f"filter_profile_{st.session_state.reset_counter}",
     )
 
     # Filtre télétravail
-    remote_filter = st.checkbox("Télétravail possible uniquement")
+    remote_filter = st.checkbox(
+        "Télétravail possible uniquement",
+        key=f"filter_remote_{st.session_state.reset_counter}",
+    )
 
     # Filtre par compétences
     skills_input = st.text_input(
         "🛠️ Compétences (séparées par des virgules)",
         placeholder="Ex: Python, SQL, Docker",
+        key=f"filter_skills_{st.session_state.reset_counter}",
     )
     skills_filter = (
         [s.strip() for s in skills_input.split(",") if s.strip()]
@@ -187,10 +200,17 @@ with st.sidebar:
         ],
         default=[],
         format_func=lambda x: x[0],
+        key=f"filter_education_{st.session_state.reset_counter}",
     )
     education_levels = [e[1] for e in education_filter] if education_filter else []
 
     st.markdown("---")
+
+    # Bouton reset
+    if st.button("🔄 Réinitialiser les filtres", use_container_width=True):
+        # Incrémenter le compteur pour forcer la recréation des widgets
+        st.session_state.reset_counter += 1
+        st.rerun()
 
 # ============================================================================
 # VÉRIFICATION DE LA CONNEXION API
