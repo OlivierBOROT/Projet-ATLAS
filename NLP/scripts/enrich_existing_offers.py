@@ -114,10 +114,31 @@ class OfferEnricher:
             category = self.skill_extractor.categorize_offer(description)
 
             # Calcul du profile_confidence (en pourcentage)
-            max_score = 10  # On considère 10+ skills comme 100%
-            profile_confidence = min(
-                100, int((category["profile_score"] / max_score) * 100)
-            )
+            # Formule améliorée : prend en compte le nombre absolu ET le ratio
+            total_tech_skills = len(skills["all_tech_skills"])
+            matched_skills = category["profile_score"]
+
+            if total_tech_skills == 0:
+                # Aucune skill tech → 0% de confiance
+                profile_confidence = 0
+            elif matched_skills == 0:
+                # Aucune skill matchée → 0% de confiance
+                profile_confidence = 0
+            else:
+                # Ratio de skills matchées
+                ratio = matched_skills / total_tech_skills
+
+                # Facteur de confiance basé sur le nombre absolu
+                # 1 skill = 50%, 2 skills = 70%, 3+ skills = 100%
+                if matched_skills == 1:
+                    confidence_factor = 0.5
+                elif matched_skills == 2:
+                    confidence_factor = 0.7
+                else:
+                    confidence_factor = 1.0
+
+                # Score final = ratio * facteur
+                profile_confidence = min(100, int(ratio * confidence_factor * 100))
 
             # 3. EXTRACTION INFOS
             info = self.info_extractor.extract_all(description)

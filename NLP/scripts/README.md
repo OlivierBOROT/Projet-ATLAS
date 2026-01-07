@@ -40,4 +40,4 @@ Tous les détails sont sauvegardés dans `enrichment_YYYYMMDD_HHMMSS.log` :
 - Compétences techniques et soft skills
 - Informations extraites (formation, télétravail)
 
-MAJS : 4001, 4636, 1177, 2662 (maj du code -> ajoute bien les skills), 313, 1579 (maj du code -> ajout des embeddings), 1986, 2317, 5042
+MAJS : 4001, 4636, 1177, 2662 (maj du code -> ajoute bien les skills), 313, 1579 (maj du code -> ajout des embeddings), 1986, 2317, 5042, 4091, 4804, 1443, 740, 1778
