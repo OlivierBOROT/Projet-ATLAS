@@ -1,0 +1,220 @@
+{
+  "communication": {
+    "communication": {
+      "synonyms": ["communication", "communiquer"],
+      "context_patterns": ["excellente communication", "capacité.*communiquer", "compétences.*communication"]
+    },
+    "écoute": {
+      "synonyms": ["écoute", "ecoute", "écoute active"],
+      "context_patterns": ["capacité.*écoute", "qualité.*écoute"]
+    },
+    "pédagogie": {
+      "synonyms": ["pédagogie", "pedagogie", "pédagogique"],
+      "context_patterns": ["capacité.*pédagogique", "sens.*pédagogie"]
+    },
+    "présentation": {
+      "synonyms": ["présentation", "presentation"],
+      "context_patterns": ["capacité.*présentation", "compétences.*présentation"]
+    },
+    "négociation": {
+      "synonyms": ["négociation", "negociation", "négocier"],
+      "context_patterns": ["capacité.*négociation", "compétences.*négociation"]
+    }
+  },
+  "teamwork": {
+    "collaboration": {
+      "synonyms": ["collaboration", "collaborer", "collaboratif"],
+      "context_patterns": ["esprit.*collaboration", "travail collaboratif", "savoir collaborer"]
+    },
+    "esprit d'équipe": {
+      "synonyms": ["esprit d'équipe", "esprit d'equipe", "esprit équipe"],
+      "context_patterns": ["bon esprit.*équipe", "fort esprit.*équipe"]
+    },
+    "coopération": {
+      "synonyms": ["coopération", "cooperation", "coopérer"],
+      "context_patterns": ["capacité.*coopération"]
+    },
+    "travail en équipe": {
+      "synonyms": ["travail en équipe", "travail en equipe", "team work", "teamwork"],
+      "context_patterns": ["capacité.*travail.*équipe"]
+    }
+  },
+  "autonomy": {
+    "autonomie": {
+      "synonyms": ["autonomie", "autonome"],
+      "context_patterns": ["capacité.*travailler.*autonomie", "travail en autonomie", "autonome dans"]
+    },
+    "initiative": {
+      "synonyms": ["initiative", "force de proposition"],
+      "context_patterns": ["prise.*initiative", "esprit.*initiative", "force de proposition"]
+    },
+    "proactivité": {
+      "synonyms": ["proactif", "proactive", "proactivité", "proactivite"],
+      "context_patterns": ["attitude proactive", "démarche proactive"]
+    }
+  },
+  "organization": {
+    "organisation": {
+      "synonyms": ["organisation", "organisé", "organise"],
+      "context_patterns": ["sens.*organisation", "capacité.*organisation", "excellente.*organisation"]
+    },
+    "rigueur": {
+      "synonyms": ["rigueur", "rigoureux", "rigoureuse"],
+      "context_patterns": ["esprit.*rigueur", "suivi rigoureux", "travail rigoureux"]
+    },
+    "méthodique": {
+      "synonyms": ["méthodique", "methodique", "méthodologie"],
+      "context_patterns": ["approche méthodique", "travail méthodique"]
+    },
+    "structuré": {
+      "synonyms": ["structuré", "structure", "structuration"],
+      "context_patterns": ["approche structurée", "pensée structurée"]
+    },
+    "gestion du temps": {
+      "synonyms": ["gestion du temps", "gestion des priorités", "priorisation"],
+      "context_patterns": ["capacité.*gérer.*temps", "gérer.*priorités"]
+    }
+  },
+  "adaptability": {
+    "adaptabilité": {
+      "synonyms": ["adaptabilité", "adaptabilite", "adaptable"],
+      "context_patterns": ["capacité.*adaptation", "grande adaptabilité"]
+    },
+    "flexibilité": {
+      "synonyms": ["flexible", "flexibilité", "flexibilite"],
+      "context_patterns": ["capacité.*flexibilité", "approche flexible"]
+    },
+    "polyvalence": {
+      "synonyms": ["polyvalence", "polyvalent", "polyvalente"],
+      "context_patterns": ["profil polyvalent", "capacité.*polyvalence"]
+    },
+    "agilité": {
+      "synonyms": ["agilité", "agilite", "agile"],
+      "context_patterns": ["agilité d'esprit", "capacité.*agilité"]
+    },
+    "curiosité": {
+      "synonyms": ["curiosité", "curiosite", "curieux", "curieuse"],
+      "context_patterns": ["esprit.*curiosité", "grande curiosité"]
+    },
+    "apprentissage": {
+      "synonyms": ["capacité d'apprentissage", "apprentissage rapide", "apprendre"],
+      "context_patterns": ["capacité.*apprendre", "apprentissage.*rapide", "apprendre rapidement"]
+    }
+  },
+  "leadership": {
+    "leadership": {
+      "synonyms": ["leadership", "leader"],
+      "context_patterns": ["compétences.*leadership", "qualités.*leadership", "fort leadership"]
+    },
+    "management": {
+      "synonyms": ["management", "manager", "gestion d'équipe"],
+      "context_patterns": ["compétences.*management", "expérience.*management", "management.*équipe"]
+    },
+    "encadrement": {
+      "synonyms": ["encadrement", "encadrer"],
+      "context_patterns": ["capacité.*encadrement", "encadrement.*équipe"]
+    },
+    "mentoring": {
+      "synonyms": ["mentor", "mentoring", "mentorat"],
+      "context_patterns": ["rôle.*mentor", "accompagnement.*équipe"]
+    },
+    "coaching": {
+      "synonyms": ["coaching", "coach"],
+      "context_patterns": ["accompagnement", "développement.*équipe"]
+    },
+    "motivation": {
+      "synonyms": ["motivation", "motivé", "motive", "motivant"],
+      "context_patterns": ["capacité.*motiver", "motivation.*équipe"]
+    },
+    "fédérateur": {
+      "synonyms": ["fédérateur", "federateur", "fédératrice"],
+      "context_patterns": ["profil fédérateur", "capacité.*fédérer"]
+    }
+  },
+  "problem_solving": {
+    "analyse": {
+      "synonyms": ["analyse", "analytique", "analyser"],
+      "context_patterns": ["capacité.*analyse", "esprit.*analyse", "compétences.*analytique"]
+    },
+    "résolution de problèmes": {
+      "synonyms": ["résolution de problèmes", "resolution de problemes", "problem solving", "résolution"],
+      "context_patterns": ["capacité.*résolution", "résoudre.*problèmes"]
+    },
+    "esprit critique": {
+      "synonyms": ["esprit critique", "pensée critique", "critique"],
+      "context_patterns": ["capacité.*analyse critique"]
+    },
+    "créativité": {
+      "synonyms": ["créatif", "creatif", "créativité", "creativite", "créative"],
+      "context_patterns": ["esprit.*créatif", "approche créative"]
+    },
+    "innovation": {
+      "synonyms": ["innovation", "innovant", "innovante"],
+      "context_patterns": ["esprit.*innovation", "démarche innovante"]
+    }
+  },
+  "personal_qualities": {
+    "passion": {
+      "synonyms": ["passion", "passionné", "passionne", "passionnée"],
+      "context_patterns": ["profil passionné", "grande passion"]
+    },
+    "motivation": {
+      "synonyms": ["motivation", "motivé", "motive", "motivée"],
+      "context_patterns": ["forte motivation", "très motivé"]
+    },
+    "dynamisme": {
+      "synonyms": ["dynamique", "dynamisme"],
+      "context_patterns": ["profil dynamique", "esprit dynamique"]
+    },
+    "enthousiasme": {
+      "synonyms": ["enthousiasme", "enthousiaste"],
+      "context_patterns": ["grande enthousiasme", "profil enthousiaste"]
+    },
+    "persévérance": {
+      "synonyms": ["persévérance", "perseverance", "persévérant"],
+      "context_patterns": ["esprit.*persévérance"]
+    },
+    "résilience": {
+      "synonyms": ["résilience", "resilience", "résilient"],
+      "context_patterns": ["capacité.*résilience"]
+    }
+  },
+  "stress_management": {
+    "gestion du stress": {
+      "synonyms": ["gestion du stress", "résistance au stress", "gestion de la pression"],
+      "context_patterns": ["capacité.*gérer.*stress", "résistance.*stress", "travailler.*pression"]
+    },
+    "sang-froid": {
+      "synonyms": ["sang-froid", "calme", "posé"],
+      "context_patterns": ["garder.*sang-froid", "rester calme"]
+    }
+  },
+  "interpersonal": {
+    "empathie": {
+      "synonyms": ["empathie", "empathique", "bienveillance", "bienveillant"],
+      "context_patterns": ["capacité.*empathie", "profil bienveillant"]
+    },
+    "diplomatie": {
+      "synonyms": ["diplomatie", "diplomatique"],
+      "context_patterns": ["qualités diplomatiques", "sens.*diplomatie"]
+    },
+    "gestion de conflits": {
+      "synonyms": ["gestion de conflits", "gestion des conflits", "résolution de conflits"],
+      "context_patterns": ["gérer.*conflits", "résoudre.*conflits", "gestion.*écarts.*périmètre"]
+    }
+  },
+  "commitment": {
+    "fiabilité": {
+      "synonyms": ["fiabilité", "fiable", "fiabilite"],
+      "context_patterns": ["profil fiable", "personne de confiance"]
+    },
+    "engagement": {
+      "synonyms": ["engagement", "engagé", "engage"],
+      "context_patterns": ["fort engagement", "grande implication"]
+    },
+    "disponibilité": {
+      "synonyms": ["disponibilité", "disponibilite", "disponible"],
+      "context_patterns": ["grande disponibilité", "bonne disponibilité"]
+    }
+  }
+}
