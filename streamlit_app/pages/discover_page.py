@@ -62,6 +62,7 @@ st.markdown(
         background: white !important;
         padding: 1rem !important;
         border-radius: 10px !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
         z-index: 1000 !important;
         display: flex !important;
         justify-content: center !important;
@@ -69,7 +70,6 @@ st.markdown(
         gap: 0.5rem !important;
         width: auto !important;
         margin-left: 0 !important;
-        transition: left 0.3s ease !important;
     }
     /* Supprimer les bordures et backgrounds des colonnes */
     [data-testid="stHorizontalBlock"]:has(button[kind="secondary"]) [data-testid="column"] {
@@ -87,7 +87,6 @@ st.markdown(
         box-shadow: none !important;
         border: 1px solid #d0d0d0 !important;
         border-radius: 5px !important;
-        text-align: center !important;
     }
     /* Conteneur du number input */
     [data-testid="stHorizontalBlock"]:has(button[kind="secondary"]) [data-testid="stNumberInput"] {
@@ -107,42 +106,6 @@ st.markdown(
         padding-bottom: 150px !important;
     }
 </style>
-<script>
-    // Observer pour détecter les changements de la sidebar
-    function adjustNavigationPosition() {
-        const sidebar = document.querySelector('[data-testid="stSidebar"]');
-        const nav = document.querySelector('[data-testid="stHorizontalBlock"]:has(button[kind="secondary"])');
-        
-        if (sidebar && nav) {
-            const isExpanded = sidebar.getAttribute('aria-expanded') === 'true';
-            const sidebarWidth = sidebar.offsetWidth;
-            
-            if (isExpanded && sidebarWidth > 100) {
-                nav.style.left = `calc(50% + ${sidebarWidth / 2}px)`;
-            } else {
-                nav.style.left = '50%';
-            }
-        }
-    }
-    
-    // Observer les changements
-    const observer = new MutationObserver(adjustNavigationPosition);
-    const config = { attributes: true, childList: true, subtree: true };
-    
-    // Attendre que le DOM soit chargé
-    setTimeout(() => {
-        const sidebar = document.querySelector('[data-testid="stSidebar"]');
-        if (sidebar) {
-            observer.observe(sidebar, config);
-            observer.observe(document.body, config);
-        }
-        adjustNavigationPosition();
-    }, 500);
-    
-    // Ajuster aussi lors du redimensionnement
-    window.addEventListener('resize', adjustNavigationPosition);
-    setInterval(adjustNavigationPosition, 1000);
-</script>
 """,
     unsafe_allow_html=True,
 )
@@ -228,10 +191,6 @@ with st.sidebar:
     education_levels = [e[1] for e in education_filter] if education_filter else []
 
     st.markdown("---")
-
-    # Bouton reset
-    if st.button("🔄 Réinitialiser les filtres", use_container_width=True):
-        st.rerun()
 
 # ============================================================================
 # VÉRIFICATION DE LA CONNEXION API
@@ -487,7 +446,7 @@ with st.container():
             disabled=(st.session_state.current_page <= 1),
             help="Page précédente",
         ):
-            st.session_state.current_page -= 1
+            st.session_state.current_page = max(1, st.session_state.current_page - 1)
             st.rerun()
 
     with col3:
@@ -496,7 +455,6 @@ with st.container():
             min_value=1,
             max_value=total_pages,
             value=st.session_state.current_page,
-            key="page_nav",
             label_visibility="collapsed",
         )
         if page_input != st.session_state.current_page:
@@ -510,7 +468,9 @@ with st.container():
             disabled=(st.session_state.current_page >= total_pages),
             help="Page suivante",
         ):
-            st.session_state.current_page += 1
+            st.session_state.current_page = min(
+                total_pages, st.session_state.current_page + 1
+            )
             st.rerun()
 
     with col5:
