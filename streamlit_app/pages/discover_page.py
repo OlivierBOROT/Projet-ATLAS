@@ -60,23 +60,29 @@ st.markdown(
         left: 50% !important;
         transform: translateX(-50%) !important;
         background: white !important;
-        padding: 1rem !important;
+        padding: 1rem 1.5rem !important;
         border-radius: 10px !important;
         box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
         z-index: 1000 !important;
         display: flex !important;
         justify-content: center !important;
         align-items: center !important;
-        gap: 0.5rem !important;
-        width: auto !important;
+        gap: 0.8rem !important;
+        min-width: 500px !important;
         margin-left: 0 !important;
     }
     /* Supprimer les bordures et backgrounds des colonnes */
     [data-testid="stHorizontalBlock"]:has(button[kind="secondary"]) [data-testid="column"] {
         background: transparent !important;
         border: none !important;
-        padding: 0 !important;
+        padding: 0 0.3rem !important;
         box-shadow: none !important;
+        min-width: fit-content !important;
+    }
+    /* Boutons de navigation */
+    [data-testid="stHorizontalBlock"]:has(button[kind="secondary"]) button {
+        min-width: 45px !important;
+        padding: 0.5rem !important;
     }
     [data-testid="stHorizontalBlock"]:has(button[kind="secondary"]) button:hover {
         background: #e0e0e0 !important;
@@ -87,12 +93,15 @@ st.markdown(
         box-shadow: none !important;
         border: 1px solid #d0d0d0 !important;
         border-radius: 5px !important;
+        min-width: 80px !important;
+        text-align: center !important;
     }
     /* Conteneur du number input */
     [data-testid="stHorizontalBlock"]:has(button[kind="secondary"]) [data-testid="stNumberInput"] {
         background: transparent !important;
         box-shadow: none !important;
         border: none !important;
+        min-width: 120px !important;
     }
     /* Texte de page */
     [data-testid="stHorizontalBlock"]:has(button[kind="secondary"]) [data-testid="stMarkdownContainer"] {

@@ -179,9 +179,11 @@ def get_offers(
                 s.source_name, f.published_date, f.collected_date,
                 f.skills_extracted, f.profile_category, f.profile_score, 
                 f.education_level, f.education_type, f.remote_possible, 
-                f.remote_days, f.remote_percentage
+                f.remote_days, f.remote_percentage,
+                r.nom_commune, r.nom_region
             FROM fact_job_offers f
             LEFT JOIN dim_sources s ON f.source_id = s.source_id
+            LEFT JOIN ref_communes_france r ON f.commune_id = r.commune_id
             WHERE 1=1{where_sql}
             ORDER BY f.collected_date DESC
             LIMIT :limit OFFSET :offset
@@ -191,6 +193,14 @@ def get_offers(
 
         offers = []
         for row in result:
+            # Construire la localisation
+            location_parts = []
+            if row[16]:  # nom_commune
+                location_parts.append(row[16])
+            if row[17]:  # nom_region
+                location_parts.append(row[17])
+            location = ", ".join(location_parts) if location_parts else "Non spécifié"
+
             offers.append(
                 {
                     "offer_id": row[0],
@@ -209,7 +219,7 @@ def get_offers(
                     "remote_possible": row[13] if row[13] else False,
                     "remote_days": row[14],
                     "remote_percentage": row[15],
-                    "location": "",
+                    "location": location,
                 }
             )
 
