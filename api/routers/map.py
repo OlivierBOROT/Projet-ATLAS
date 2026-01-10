@@ -12,7 +12,7 @@ router = APIRouter()
 
 def get_db():
     """Dépendance pour obtenir la session de base de données"""
-    from api.main import SessionLocal
+    from main import SessionLocal
 
     db = SessionLocal()
     try:

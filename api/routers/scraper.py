@@ -32,8 +32,8 @@ from collectors.wttj_collector import WTTJCollector
 from collectors.france_travail_collector import FranceTravailCollector
 
 # Import des modules de traitement
-from api.routers.database_saver import save_offer_to_database
-from api.routers.topic_predictor import predict_topic_for_offer
+from routers.database_saver import save_offer_to_database
+from routers.topic_predictor import predict_topic_for_offer
 
 logger = logging.getLogger("scraper")
 

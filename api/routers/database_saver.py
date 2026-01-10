@@ -22,7 +22,7 @@ if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
 from collectors.geo_matcher import GeoMatcher
-from api.routers.topic_predictor import get_topic_predictor
+from routers.topic_predictor import get_topic_predictor
 
 logger = logging.getLogger("database_saver")
 

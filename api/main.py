@@ -15,7 +15,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 
 # Import des routers
-from api.routers import scraper, glassdoor, map
+from routers import scraper, glassdoor, map
 
 # Charger les variables d'environnement
 load_dotenv()

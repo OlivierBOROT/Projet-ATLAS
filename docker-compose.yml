@@ -1,68 +1,48 @@
 version: '3.8'
 
 services:
-  postgres:
-    image: ankane/pgvector:latest
-    container_name: atlas_postgres
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB:-atlas}
-      POSTGRES_USER: ${POSTGRES_USER:-atlas_user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-atlas_password}
-      PGDATA: /var/lib/postgresql/data/pgdata
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./database/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
-      - ./database/seed_data_final.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
-    ports:
-      - "5432:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-atlas_user} -d ${POSTGRES_DB:-atlas}"]
-      interval: 10s
-      timeout: 5s
-      retries: 10  
-      start_period: 60s  
-    networks:
-      - atlas_network
-
   api:
     build:
-      context: ./api
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./api/Dockerfile
     container_name: atlas_api
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-atlas_user}:${POSTGRES_PASSWORD:-atlas_password}@postgres:5432/${POSTGRES_DB:-atlas}
+      DATABASE_URL: ${DATABASE_URL}
+      RAPIDAPI_KEY: ${RAPIDAPI_KEY}
       ENVIRONMENT: production
-    volumes:
-      - ./api:/app
     ports:
       - "8000:8000"
+    networks:
+      - atlas_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  streamlit:
+    build:
+      context: .
+      dockerfile: ./streamlit_app/Dockerfile
+    container_name: atlas_streamlit
+    environment:
+      API_URL: http://api:8000
+    ports:
+      - "8501:8501"
     depends_on:
-      postgres:
+      api:
         condition: service_healthy
     networks:
       - atlas_network
     restart: unless-stopped
-
-  streamlit:
-    build:
-      context: ./streamlit_app
-      dockerfile: Dockerfile
-    container_name: atlas_streamlit
-    environment:
-      API_URL: http://api:8000
-    volumes:
-      - ./streamlit_app:/app
-    ports:
-      - "8501:8501"
-    depends_on:
-      - api
-    networks:
-      - atlas_network
-    restart: unless-stopped
-
-volumes:
-  postgres_data:
-    driver: local
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8501/_stcore/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
 networks:
   atlas_network:

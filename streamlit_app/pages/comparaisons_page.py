@@ -8,9 +8,14 @@ import streamlit as st
 import sys
 from pathlib import Path
 import json
+import os
+import requests
+
+# Configuration
+API_URL = os.getenv("API_URL", "http://localhost:8000")
 
 # Ajouter le chemin des modules NLP
-nlp_modules_path = Path(__file__).parent.parent.parent / "NLP" / "modules"
+nlp_modules_path = Path(__file__).parent.parent / "NLP" / "modules"
 sys.path.insert(0, str(nlp_modules_path))
 
 try:
@@ -72,10 +77,8 @@ st.header("🗄️ Comparaison depuis la base de données")
 @st.cache_data(ttl=300)
 def load_offers_list():
     """Charge la liste des offres depuis l'API"""
-    import requests
-
     try:
-        response = requests.get("http://localhost:8000/api/offers/list")
+        response = requests.get(f"{API_URL}/api/offers/list")
         if response.status_code == 200:
             return response.json()["offers"]
         return []
@@ -85,10 +88,8 @@ def load_offers_list():
 
 def load_offer_by_id(offer_id):
     """Charge une offre complète avec son embedding"""
-    import requests
-
     try:
-        response = requests.get(f"http://localhost:8000/api/offers/get/{offer_id}")
+        response = requests.get(f"{API_URL}/api/offers/get/{offer_id}")
         if response.status_code == 200:
             return response.json()
         return None

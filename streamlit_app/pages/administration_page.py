@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
 import json
+import os
 
 st.title("⚙️ Administration - Scraping à la demande")
 
@@ -10,7 +11,7 @@ st.markdown("---")
 # CONFIGURATION
 # ============================================================================
 
-API_BASE_URL = "http://localhost:8000"
+API_BASE_URL = os.getenv("API_URL", "http://localhost:8000")
 
 
 # ============================================================================
