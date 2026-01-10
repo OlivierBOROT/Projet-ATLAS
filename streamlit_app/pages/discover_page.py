@@ -9,6 +9,9 @@ import requests
 import os
 from datetime import datetime
 from dotenv import load_dotenv
+import folium
+from folium.plugins import MarkerCluster
+from streamlit_folium import st_folium
 
 # Charger les variables d'environnement
 load_dotenv()
@@ -215,6 +218,15 @@ with st.sidebar:
 
     st.markdown("---")
 
+    # Toggle pour afficher la carte
+    show_map = st.checkbox(
+        "🗺️ Afficher la carte géographique",
+        value=False,
+        key=f"show_map_{st.session_state.reset_counter}",
+    )
+
+    st.markdown("---")
+
     # Bouton reset
     if st.button("🔄 Réinitialiser les filtres", use_container_width=True):
         # Incrémenter le compteur pour forcer la recréation des widgets
@@ -313,6 +325,33 @@ def count_total_offers(
         return 0
 
 
+@st.cache_data(ttl=300)
+def load_map_data(
+    source=None, contract=None, profile=None, remote=None, skills=None, education=None
+):
+    """Charge les données géographiques pour la carte"""
+    try:
+        params = {}
+        if source:
+            params["source"] = ",".join(source)
+        if contract:
+            params["contract"] = ",".join(contract)
+        if profile:
+            params["profile"] = ",".join(profile)
+        if remote:
+            params["remote"] = "true"
+        if skills:
+            params["skills"] = ",".join(skills)
+        if education:
+            params["education"] = ",".join([str(e) for e in education])
+
+        response = requests.get(f"{API_URL}/api/map-data", params=params, timeout=10)
+        return response.json()
+    except Exception as e:
+        st.error(f"Erreur lors du chargement de la carte: {str(e)}")
+        return {"cities": [], "total": 0}
+
+
 # Préparer les filtres (source_filter contient déjà les valeurs de la BDD)
 sources = source_filter if source_filter else None
 contracts = contract_filter if contract_filter else None
@@ -367,6 +406,97 @@ with col3:
     st.metric("📦 Total", f"{total_offers:,}")
 
 st.markdown("---")
+
+# ============================================================================
+# CARTE GÉOGRAPHIQUE (si activée)
+# ============================================================================
+
+if show_map:
+    st.subheader("🗺️ Carte géographique des offres")
+
+    with st.spinner("Chargement de la carte..."):
+        # Charger les données géographiques avec les mêmes filtres
+        map_data = load_map_data(
+            sources, contracts, profiles, remote, skills, education
+        )
+        cities = map_data.get("cities", [])
+
+        if cities:
+            # Créer la carte centrée sur la France
+            m = folium.Map(
+                location=[46.603354, 1.888334],  # Centre de la France
+                zoom_start=6,
+                tiles="OpenStreetMap",
+            )
+
+            # Créer le cluster de marqueurs
+            marker_cluster = MarkerCluster(
+                name="Offres d'emploi",
+                overlay=True,
+                control=True,
+                icon_create_function="""
+                    function(cluster) {
+                        var childCount = cluster.getChildCount();
+                        var c = ' marker-cluster-';
+                        if (childCount < 10) {
+                            c += 'small';
+                        } else if (childCount < 50) {
+                            c += 'medium';
+                        } else {
+                            c += 'large';
+                        }
+                        return new L.DivIcon({ 
+                            html: '<div><span>' + childCount + '</span></div>', 
+                            className: 'marker-cluster' + c, 
+                            iconSize: new L.Point(40, 40) 
+                        });
+                    }
+                """,
+            )
+
+            # Ajouter les marqueurs pour chaque ville
+            for city_data in cities:
+                # Créer le popup avec les informations
+                popup_html = f"""
+                    <div style="font-family: Arial; min-width: 200px;">
+                        <h4 style="margin: 0 0 10px 0; color: #667eea;">{city_data['city']}</h4>
+                        <p style="margin: 5px 0;"><strong>Région:</strong> {city_data['region']}</p>
+                        <p style="margin: 5px 0;"><strong>Offres:</strong> {city_data['count']}</p>
+                        <p style="margin: 5px 0;"><strong>Profils:</strong><br>{", ".join(city_data['profiles'][:5]) if city_data['profiles'] else "N/A"}</p>
+                        <p style="margin: 5px 0;"><strong>Contrats:</strong><br>{", ".join(city_data['contracts']) if city_data['contracts'] else "N/A"}</p>
+                    </div>
+                """
+
+                # Couleur du marqueur en fonction du nombre d'offres
+                if city_data["count"] < 5:
+                    color = "lightblue"
+                elif city_data["count"] < 20:
+                    color = "blue"
+                else:
+                    color = "darkblue"
+
+                folium.CircleMarker(
+                    location=[city_data["lat"], city_data["lon"]],
+                    radius=8,
+                    popup=folium.Popup(popup_html, max_width=300),
+                    tooltip=f"{city_data['city']}: {city_data['count']} offres",
+                    color=color,
+                    fill=True,
+                    fillColor=color,
+                    fillOpacity=0.7,
+                ).add_to(marker_cluster)
+
+            # Ajouter le cluster à la carte
+            marker_cluster.add_to(m)
+
+            # Afficher la carte
+            st_folium(m, width=None, height=500)
+
+            st.caption(f"📍 {len(cities)} villes avec des offres d'emploi")
+        else:
+            st.info("Aucune donnée géographique disponible pour ces filtres")
+
+    st.markdown("---")
 
 # ============================================================================
 # AFFICHAGE DES OFFRES
