@@ -82,7 +82,7 @@ class TopicPredictor:
         # Trouver le modèle
         if model_path is None:
             # Chercher dans le dossier NLP/scripts
-            nlp_scripts_dir = Path(__file__).parent.parent.parent / "NLP" / "scripts"
+            nlp_scripts_dir = Path(__file__).parent.parent / "NLP" / "scripts"
 
             # Chercher tous les fichiers lda_model_*.pkl
             model_files = list(nlp_scripts_dir.glob("lda_model_*.pkl"))
