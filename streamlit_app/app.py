@@ -59,11 +59,16 @@ with st.sidebar:
     st.header("🔍 Filtres")
 
     # Filtre par source
-    source_filter = st.multiselect(
+    source_options = {
+        "France Travail": "france_travail",
+        "Welcome to the Jungle": "welcome_to_the_jungle",
+    }
+    source_filter_display = st.multiselect(
         "Source",
-        ["France Travail", "Welcome to the Jungle"],
-        default=["France Travail", "Welcome to the Jungle"],
+        list(source_options.keys()),
+        default=list(source_options.keys()),
     )
+    source_filter = [source_options[s] for s in source_filter_display]
 
     # Filtre par type de contrat
     contract_filter = st.multiselect(
@@ -128,10 +133,15 @@ def load_stats():
 
 
 @st.cache_data(ttl=300)
-def load_offers(limit=100):
+def load_offers(limit=100, sources=None, contracts=None):
     """Charge les offres avec leurs relations"""
     try:
-        response = requests.get(f"{API_URL}/api/offers?limit={limit}")
+        params = {"limit": limit}
+        if sources:
+            params["source"] = ",".join(sources)
+        if contracts:
+            params["contract"] = ",".join(contracts)
+        response = requests.get(f"{API_URL}/api/offers", params=params)
         return response.json()
     except:
         return {"offers": [], "count": 0}
@@ -210,7 +220,11 @@ def load_advanced_stats():
 
 
 stats = load_stats()
-offers_data = load_offers(limit=500)
+offers_data = load_offers(
+    limit=500,
+    sources=source_filter if source_filter else None,
+    contracts=contract_filter if contract_filter else None,
+)
 sources_stats = load_sources_stats()
 contracts_stats = load_contracts_stats()
 cities_stats = load_cities_stats()
@@ -477,33 +491,56 @@ with col_f3:
 if offers_data.get("count", 0) > 0:
     offers = offers_data["offers"][:show_count]
 
+    # Mapping des sources
+    source_names = {
+        "france_travail": "France Travail",
+        "welcome_to_the_jungle": "Welcome to the Jungle",
+    }
+
     for i, offer in enumerate(offers, 1):
+        # Extraire les infos de localisation
+        location = offer.get("location", "N/A")
+        company_name = offer.get("company_name", "N/A")
+
         with st.expander(
-            f"**{i}. {offer.get('title', 'Sans titre')}** - {offer.get('company', 'N/A')} ({offer.get('city', 'N/A')})"
+            f"**{i}. {offer.get('title', 'Sans titre')}** - {company_name} ({location})"
         ):
 
             col_o1, col_o2, col_o3 = st.columns([2, 1, 1])
 
             with col_o1:
-                st.markdown(f"**🏢 Entreprise :** {offer.get('company', 'N/A')}")
-                st.markdown(
-                    f"**📍 Localisation :** {offer.get('city', 'N/A')} - {offer.get('region', 'N/A')}"
-                )
-                st.markdown(f"**📄 Contrat :** {offer.get('contract', 'N/A')}")
+                st.markdown(f"**🏢 Entreprise :** {company_name}")
+                st.markdown(f"**📍 Localisation :** {location}")
+                st.markdown(f"**📄 Contrat :** {offer.get('contract_type', 'N/A')}")
 
             with col_o2:
                 st.markdown(f"**💰 Salaire :**")
-                salary_min = offer.get("salary_min", 0)
-                salary_max = offer.get("salary_max", 0)
-                if salary_min > 0 or salary_max > 0:
-                    st.markdown(f"{salary_min}K - {salary_max}K €")
+                salary_min = offer.get("salary_min")
+                salary_max = offer.get("salary_max")
+                if salary_min and salary_max:
+                    st.markdown(f"{int(salary_min)}K - {int(salary_max)}K €")
+                elif salary_min:
+                    st.markdown(f"À partir de {int(salary_min)}K €")
                 else:
                     st.markdown("Non spécifié")
 
             with col_o3:
-                st.markdown(f"**📅 Publié le :**")
-                st.markdown(f"{offer.get('date', 'N/A')}")
-                st.markdown(f"**🔗 Source :** {offer.get('source', 'N/A')}")
+                st.markdown(f"**� Publié le :**")
+                published_date = offer.get("published_date")
+                if published_date:
+                    # Extraire seulement la date (format: YYYY-MM-DD)
+                    date_only = (
+                        published_date.split("T")[0]
+                        if "T" in published_date
+                        else published_date
+                    )
+                    st.markdown(f"{date_only}")
+                else:
+                    st.markdown("N/A")
+
+                source = offer.get("source", "N/A")
+                source_display = source_names.get(source, source)
+                st.markdown(f"**🔗 Source :** {source_display}")
 
             if offer.get("url"):
                 st.markdown(f"[🔗 Voir l'offre complète]({offer.get('url')})")
