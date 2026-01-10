@@ -640,9 +640,48 @@ else:
         profile_confidence = offer.get("profile_confidence", 0)
         skills_extracted = offer.get("skills_extracted", [])
         remote_possible = offer.get("remote_possible", False)
+        remote_days = offer.get("remote_days")
+        remote_percentage = offer.get("remote_percentage")
         education_level = offer.get("education_level")
+        education_type = offer.get("education_type")
+        experience_years = offer.get("experience_years")
+        salary_min = offer.get("salary_min")
+        salary_max = offer.get("salary_max")
+
+        # Construire les badges d'informations
+        info_badges = []
+
+        # Salaire
+        if salary_min and salary_max:
+            info_badges.append(f"💰 {int(salary_min)}-{int(salary_max)}K€")
+        elif salary_min:
+            info_badges.append(f"💰 À partir de {int(salary_min)}K€")
+
+        # Expérience
+        if experience_years:
+            exp_text = (
+                f"{experience_years} an"
+                if experience_years == 1
+                else f"{experience_years} ans"
+            )
+            info_badges.append(f"💼 {exp_text} d'exp.")
+
+        # Formation
+        if education_level:
+            info_badges.append(f"🎓 Bac+{education_level}")
+
+        # Télétravail
+        if remote_possible:
+            if remote_percentage:
+                info_badges.append(f"🏠 Télétravail {remote_percentage}%")
+            elif remote_days:
+                info_badges.append(f"🏠 Télétravail {remote_days}j/sem")
+            else:
+                info_badges.append("🏠 Télétravail possible")
 
         # Créer la carte avec Streamlit natif
+        info_line = " • ".join(info_badges) if info_badges else ""
+
         st.markdown(
             f'<div class="offer-card">'
             f'<h3 style="color: #667eea; margin: 0;">📋 {title}</h3>'
@@ -653,7 +692,12 @@ else:
             f'📅 <strong>{published_date if published_date else "Date inconnue"}</strong> • '
             f"🔗 <strong>{source}</strong>"
             f"</p>"
-            f'<p style="color: #999; font-size: 0.85rem; margin-top: 0.5rem;">'
+            + (
+                f'<p style="color: #4a5568; font-size: 0.95rem; margin-top: 0.5rem; font-weight: 500;">{info_line}</p>'
+                if info_line
+                else ""
+            )
+            + f'<p style="color: #999; font-size: 0.85rem; margin-top: 0.5rem;">'
             f"🔢 ID: <strong>{offer_id}</strong>"
             f"</p>"
             f"</div>",
@@ -662,6 +706,58 @@ else:
 
         # Utiliser expander natif Streamlit pour les détails
         with st.expander("🔍 Voir les détails"):
+            # Informations détaillées en haut
+            st.markdown("### 📊 Informations détaillées")
+
+            detail_cols = st.columns(3)
+
+            with detail_cols[0]:
+                st.markdown("**💰 Rémunération**")
+                if salary_min and salary_max:
+                    st.markdown(
+                        f"• **Fourchette:** {int(salary_min)}-{int(salary_max)}K€/an"
+                    )
+                elif salary_min:
+                    st.markdown(f"• **Minimum:** {int(salary_min)}K€/an")
+                elif salary_max:
+                    st.markdown(f"• **Maximum:** {int(salary_max)}K€/an")
+                else:
+                    st.markdown("• _Non renseigné_")
+
+            with detail_cols[1]:
+                st.markdown("**💼 Expérience & Formation**")
+                if experience_years:
+                    exp_text = (
+                        f"{experience_years} an"
+                        if experience_years == 1
+                        else f"{experience_years} ans"
+                    )
+                    st.markdown(f"• **Expérience:** {exp_text}")
+                else:
+                    st.markdown("• **Expérience:** _Non renseigné_")
+
+                if education_level:
+                    edu_text = f"Bac+{education_level}"
+                    if education_type:
+                        edu_text += f" ({education_type})"
+                    st.markdown(f"• **Formation:** {edu_text}")
+                else:
+                    st.markdown("• **Formation:** _Non renseigné_")
+
+            with detail_cols[2]:
+                st.markdown("**🏠 Télétravail**")
+                if remote_possible:
+                    if remote_percentage:
+                        st.markdown(f"• **Taux:** {remote_percentage}%")
+                    if remote_days:
+                        st.markdown(f"• **Jours/sem:** {remote_days}")
+                    if not remote_percentage and not remote_days:
+                        st.markdown("• ✅ **Possible**")
+                else:
+                    st.markdown("• ❌ **Non mentionné**")
+
+            st.markdown("---")
+
             # Analyse NLP et Compétences côte à côte
             col_left, col_right = st.columns([1, 1])
 
@@ -669,16 +765,10 @@ else:
                 st.markdown("**🎯 Analyse NLP**")
 
                 if profile_category:
-                    st.markdown(f"**Profil:** {profile_category}")
-                    st.markdown(f"**Confiance:** {profile_confidence}%")
-
-                if education_level:
-                    st.markdown(f"**Formation:** Bac+{education_level}")
-
-                if remote_possible:
-                    st.markdown("**Télétravail:** ✅ Possible")
+                    st.markdown(f"• **Profil:** {profile_category}")
+                    st.markdown(f"• **Confiance:** {profile_confidence}%")
                 else:
-                    st.markdown("**Télétravail:** ❌ Non mentionné")
+                    st.markdown("_Aucun profil détecté_")
 
             with col_right:
                 st.markdown("**🛠️ Compétences détectées**")

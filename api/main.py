@@ -219,7 +219,8 @@ def get_offers(
                 f.skills_extracted, f.profile_category, f.profile_score, 
                 f.education_level, f.education_type, f.remote_possible, 
                 f.remote_days, f.remote_percentage,
-                r.nom_commune, r.nom_region
+                r.nom_commune, r.nom_region,
+                f.salary_min, f.salary_max, f.experience_years
             FROM fact_job_offers f
             LEFT JOIN dim_sources s ON f.source_id = s.source_id
             LEFT JOIN ref_communes_france r ON f.commune_id = r.commune_id
@@ -259,6 +260,9 @@ def get_offers(
                     "remote_days": row[14],
                     "remote_percentage": row[15],
                     "location": location,
+                    "salary_min": float(row[18]) if row[18] else None,
+                    "salary_max": float(row[19]) if row[19] else None,
+                    "experience_years": row[20],
                 }
             )
 
