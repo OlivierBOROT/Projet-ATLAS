@@ -25,15 +25,15 @@ class InfoExtractor:
         # Patterns pour les salaires
         self.salary_patterns = [
             # Formats avec "k", "K", "k€"
-            r"(\d{1,3})\s*(?:à|a|-|–)\s*(\d{1,3})\s*k€?\s*(?:brut)?",  # 40 à 50 k€
-            r"(\d{1,3})\s*k€?\s*(?:à|a|-|–)\s*(\d{1,3})\s*k€?\s*(?:brut)?",  # 40k à 50k
+            r"(\d{1,3})\s*(?:à|a|-|–|et)\s*(\d{1,3})\s*k€?\s*(?:brut)?",  # 40 à 50 k€
+            r"(\d{1,3})\s*k€?\s*(?:à|a|-|–|et)\s*(\d{1,3})\s*k€?\s*(?:brut)?",  # 40k à 50k
             # Formats avec montants complets
-            r"(\d{1,3}[\s\.]?\d{3})\s*(?:à|a|-|–)\s*(\d{1,3}[\s\.]?\d{3})\s*€?\s*(?:brut)?",  # 40 000 à 50 000
-            r"(\d{1,3}[\s\.,]\d{3})\s*(?:à|a|-|–)\s*(\d{1,3}[\s\.,]\d{3})\s*€?\s*(?:brut)?",  # 40,000 à 50,000
+            r"(\d{1,3}[\s\.]?\d{3})\s*(?:à|a|-|–|et)\s*(\d{1,3}[\s\.]?\d{3})\s*€?\s*(?:brut)?",  # 40 000 à 50 000
+            r"(\d{1,3}[\s\.,]\d{3})\s*(?:à|a|-|–|et)\s*(\d{1,3}[\s\.,]\d{3})\s*€?\s*(?:brut)?",  # 40,000 à 50,000
             # Format unique "45k€"
             r"(\d{1,3})\s*k€?\s*(?:brut)?",
             # "Salaire : XXk" ou "Rémunération : XXk"
-            r"(?:salaire|rémunération|remuneration)\s*:?\s*(\d{1,3})\s*(?:à|a|-|–)\s*(\d{1,3})\s*k€?",
+            r"(?:salaire|rémunération|remuneration)\s*:?\s*(\d{1,3})\s*(?:à|a|-|–|et)\s*(\d{1,3})\s*k€?",
         ]
 
         # Patterns pour l'expérience

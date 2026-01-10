@@ -14,6 +14,9 @@ import os
 from datetime import datetime
 from dotenv import load_dotenv
 
+# Import du router de scraping
+from api.routers import scraper
+
 # Charger les variables d'environnement
 load_dotenv()
 
@@ -41,6 +44,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Inclure le router de scraping
+app.include_router(scraper.router, prefix="/api", tags=["scraping"])
 
 
 def get_db():

@@ -38,10 +38,27 @@ class EmbeddingGenerator:
         Returns:
             Embedding(s) sous forme de numpy array(s)
         """
+        # Validation du texte d'entrée
+        if text is None:
+            raise ValueError("Le texte ne peut pas être None")
+
         if isinstance(text, str):
+            # Vérifier que le texte n'est pas vide
+            if not text or len(text.strip()) == 0:
+                raise ValueError("Le texte ne peut pas être vide")
             return self.model.encode(text)
+        elif isinstance(text, list):
+            # Vérifier que la liste n'est pas vide et contient des strings valides
+            if not text:
+                raise ValueError("La liste de textes ne peut pas être vide")
+            valid_texts = [
+                t for t in text if t and isinstance(t, str) and len(t.strip()) > 0
+            ]
+            if not valid_texts:
+                raise ValueError("Aucun texte valide dans la liste")
+            return self.model.encode(valid_texts)
         else:
-            return self.model.encode(text)
+            raise TypeError(f"Type de texte non supporté: {type(text)}")
 
     def cosine_similarity(
         self, embedding1: np.ndarray, embedding2: np.ndarray
