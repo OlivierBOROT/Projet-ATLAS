@@ -56,66 +56,9 @@ st.markdown(
         border-radius: 15px;
         font-size: 0.85rem;
     }
-    /* Navigation flottante en bas - une seule grande boîte blanche */
-    [data-testid="stHorizontalBlock"]:has(button[kind="secondary"]) {
-        position: fixed !important;
-        bottom: 20px !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-        background: white !important;
-        padding: 1rem 1.5rem !important;
-        border-radius: 10px !important;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
-        z-index: 1000 !important;
-        display: flex !important;
-        justify-content: center !important;
-        align-items: center !important;
-        gap: 0.8rem !important;
-        min-width: 500px !important;
-        margin-left: 0 !important;
-    }
-    /* Supprimer les bordures et backgrounds des colonnes */
-    [data-testid="stHorizontalBlock"]:has(button[kind="secondary"]) [data-testid="column"] {
-        background: transparent !important;
-        border: none !important;
-        padding: 0 0.3rem !important;
-        box-shadow: none !important;
-        min-width: fit-content !important;
-    }
-    /* Boutons de navigation */
-    [data-testid="stHorizontalBlock"]:has(button[kind="secondary"]) button {
-        min-width: 45px !important;
-        padding: 0.5rem !important;
-    }
-    [data-testid="stHorizontalBlock"]:has(button[kind="secondary"]) button:hover {
-        background: #e0e0e0 !important;
-    }
-    /* Input de page */
-    [data-testid="stHorizontalBlock"]:has(button[kind="secondary"]) input[type="number"] {
-        background: #f0f0f0 !important;
-        box-shadow: none !important;
-        border: 1px solid #d0d0d0 !important;
-        border-radius: 5px !important;
-        min-width: 80px !important;
-        text-align: center !important;
-    }
-    /* Conteneur du number input */
-    [data-testid="stHorizontalBlock"]:has(button[kind="secondary"]) [data-testid="stNumberInput"] {
-        background: transparent !important;
-        box-shadow: none !important;
-        border: none !important;
-        min-width: 120px !important;
-    }
-    /* Texte de page */
-    [data-testid="stHorizontalBlock"]:has(button[kind="secondary"]) [data-testid="stMarkdownContainer"] {
-        background: transparent !important;
-        box-shadow: none !important;
-        border: none !important;
-        padding: 0.5rem !important;
-    }
-    /* Ajouter un padding en bas du contenu pour éviter que les offres soient cachées */
+    /* Ajouter un padding en bas du contenu */
     .main .block-container {
-        padding-bottom: 150px !important;
+        padding-bottom: 50px !important;
     }
 </style>
 """,
@@ -137,8 +80,24 @@ st.markdown("---")
 if "reset_counter" not in st.session_state:
     st.session_state.reset_counter = 0
 
+# Initialiser la page courante dans session_state
+if "current_page" not in st.session_state:
+    st.session_state.current_page = 1
+
 with st.sidebar:
     st.header("🔍 Filtres")
+
+    # Input pour aller à une page spécifique
+    st.subheader("📄 Navigation rapide")
+    page_jump = st.number_input(
+        "Aller à la page",
+        min_value=1,
+        value=st.session_state.current_page,
+        step=1,
+        key=f"page_jump_{st.session_state.reset_counter}",
+    )
+
+    st.markdown("---")
 
     # Filtre par source
     source_options = {
@@ -350,6 +309,22 @@ def load_map_data(
     except Exception as e:
         st.error(f"Erreur lors du chargement de la carte: {str(e)}")
         return {"cities": [], "total": 0}
+
+
+@st.cache_data(ttl=600)
+def get_glassdoor_score(company_name: str):
+    """Récupère le score Glassdoor d'une entreprise"""
+    try:
+        response = requests.post(
+            f"{API_URL}/api/glassdoor/search",
+            json={"company_name": company_name},
+            timeout=30,
+        )
+        if response.status_code == 200:
+            return response.json()
+        return None
+    except Exception as e:
+        return {"success": False, "error": str(e)}
 
 
 # Préparer les filtres (source_filter contient déjà les valeurs de la BDD)
@@ -580,12 +555,58 @@ else:
             st.markdown("**📄 Description complète**")
             st.markdown(description)
 
+            st.markdown("---")
+
+            # Bouton Glassdoor
+            col_glassdoor, col_empty = st.columns([1, 3])
+
+            with col_glassdoor:
+                if st.button(
+                    f"⭐ Score Glassdoor",
+                    key=f"glassdoor_{offer_id}",
+                    use_container_width=True,
+                ):
+                    with st.spinner("Recherche sur Glassdoor..."):
+                        glassdoor_data = get_glassdoor_score(company)
+
+                        if glassdoor_data and glassdoor_data.get("success"):
+                            rating = glassdoor_data.get("rating")
+                            reviews_count = glassdoor_data.get("reviews_count")
+                            company_url = glassdoor_data.get("company_url")
+
+                            st.success(f"✅ **{glassdoor_data.get('company_name')}**")
+
+                            # Afficher le rating avec des étoiles
+                            if rating:
+                                stars = "⭐" * int(rating)
+                                st.markdown(f"### {stars} **{rating}/5**")
+                            else:
+                                st.markdown("**Note:** Non disponible")
+
+                            if reviews_count:
+                                st.markdown(f"📝 **{reviews_count:,}** avis")
+
+                            if company_url:
+                                st.markdown(f"🔗 [Voir sur Glassdoor]({company_url})")
+                        else:
+                            error_msg = (
+                                glassdoor_data.get("error")
+                                if glassdoor_data
+                                else "Entreprise non trouvée"
+                            )
+                            st.warning(f"⚠️ {error_msg}")
+
 # ============================================================================
 # NAVIGATION FLOTTANTE
 # ============================================================================
 
 # Navigation flottante en bas de page
 with st.container():
+    # Vérifier si l'utilisateur a changé la page via l'input de la sidebar
+    if page_jump != st.session_state.current_page:
+        st.session_state.current_page = min(max(1, page_jump), total_pages)
+        st.rerun()
+
     col1, col2, col3, col4, col5 = st.columns([0.8, 0.8, 2, 0.8, 0.8])
 
     with col1:

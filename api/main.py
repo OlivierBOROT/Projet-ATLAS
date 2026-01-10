@@ -15,7 +15,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 
 # Import du router de scraping
-from api.routers import scraper
+from api.routers import scraper, glassdoor
 
 # Charger les variables d'environnement
 load_dotenv()
@@ -45,8 +45,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Inclure le router de scraping
+# Inclure les routers
 app.include_router(scraper.router, prefix="/api", tags=["scraping"])
+app.include_router(glassdoor.router, prefix="/api", tags=["glassdoor"])
 
 
 def get_db():
