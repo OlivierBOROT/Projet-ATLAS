@@ -68,9 +68,227 @@ st.markdown(
 # ============================================================================
 
 st.header("🗄️ Comparaison depuis la base de données")
-st.info(
-    "📌 Fonctionnalité en cours de développement - Permettra de sélectionner et comparer des offres depuis la base de données"
-)
+
+
+# Charger la liste des offres
+@st.cache_data(ttl=300)
+def load_offers_list():
+    """Charge la liste des offres depuis l'API"""
+    import requests
+
+    try:
+        response = requests.get("http://localhost:8000/api/offers/list")
+        if response.status_code == 200:
+            return response.json()["offers"]
+        return []
+    except:
+        return []
+
+
+def load_offer_by_id(offer_id):
+    """Charge une offre complète avec son embedding"""
+    import requests
+
+    try:
+        response = requests.get(f"http://localhost:8000/api/offers/get/{offer_id}")
+        if response.status_code == 200:
+            return response.json()
+        return None
+    except:
+        return None
+
+
+offers_list = load_offers_list()
+
+if not offers_list:
+    st.warning("⚠️ Impossible de charger les offres. Vérifiez que l'API est lancée.")
+else:
+    st.info(f"📊 {len(offers_list)} offres disponibles dans la base de données")
+
+    # Deux colonnes pour les selects
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.subheader("📄 Offre 1")
+        offer1_option = st.selectbox(
+            "Sélectionnez la première offre",
+            options=offers_list,
+            format_func=lambda x: x["display"],
+            key="db_offer1",
+        )
+
+    with col2:
+        st.subheader("📄 Offre 2")
+        offer2_option = st.selectbox(
+            "Sélectionnez la deuxième offre",
+            options=offers_list,
+            format_func=lambda x: x["display"],
+            key="db_offer2",
+        )
+
+    # Bouton de comparaison
+    st.markdown("<br>", unsafe_allow_html=True)
+    col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 1])
+    with col_btn2:
+        compare_db_button = st.button(
+            "🔍 Comparer les offres (BDD)", type="primary", use_container_width=True
+        )
+
+    if compare_db_button:
+        if offer1_option["offer_id"] == offer2_option["offer_id"]:
+            st.error("❌ Veuillez sélectionner deux offres différentes")
+        else:
+            with st.spinner("Chargement des offres..."):
+                offer1_data = load_offer_by_id(offer1_option["offer_id"])
+                offer2_data = load_offer_by_id(offer2_option["offer_id"])
+
+            if not offer1_data or not offer2_data:
+                st.error("❌ Erreur lors du chargement des offres")
+            elif not offer1_data.get("embedding") or not offer2_data.get("embedding"):
+                st.error("❌ Les embeddings ne sont pas disponibles pour ces offres")
+            else:
+                st.markdown("---")
+                st.header("📊 Résultats de la comparaison (BDD)")
+
+                # Récupérer le module embedding
+                embedding_gen = st.session_state.nlp_modules[
+                    "embedding_gen"
+                ]  # Convertir les embeddings (pgvector string format → numpy array)
+                import numpy as np
+                import json
+
+                def parse_pgvector_embedding(embedding):
+                    if isinstance(embedding, str):
+                        if embedding.startswith("[") and embedding.endswith("]"):
+                            return np.array(json.loads(embedding))
+                        return np.array(
+                            [float(x) for x in embedding.strip("[]").split(",")]
+                        )
+                    elif isinstance(embedding, list):
+                        return np.array(embedding)
+                    else:
+                        return embedding
+
+                emb1 = parse_pgvector_embedding(offer1_data["embedding"])
+                emb2 = parse_pgvector_embedding(offer2_data["embedding"])
+
+                # Calculer les métriques
+                similarity = embedding_gen.cosine_similarity(emb1, emb2)
+                euclidean_dist = embedding_gen.euclidean_distance(emb1, emb2)
+
+                # Affichage des offres
+                col1, col2 = st.columns(2)
+
+                with col1:
+                    st.markdown("**📄 Offre 1**")
+                    st.markdown(f"**Titre:** {offer1_data['title']}")
+                    st.markdown(f"**Entreprise:** {offer1_data['company_name']}")
+                    st.markdown(
+                        f"**Profil:** {offer1_data['profile_category'] or 'N/A'}"
+                    )
+                    st.markdown(f"**Contrat:** {offer1_data['contract_type'] or 'N/A'}")
+                    st.markdown(f"**Localisation:** {offer1_data['location']}")
+                    if offer1_data["skills_extracted"]:
+                        st.markdown(
+                            f"**Compétences:** {', '.join(offer1_data['skills_extracted'][:10])}"
+                        )
+                        if len(offer1_data["skills_extracted"]) > 10:
+                            st.caption(
+                                f"... et {len(offer1_data['skills_extracted']) - 10} autres"
+                            )
+
+                with col2:
+                    st.markdown("**📄 Offre 2**")
+                    st.markdown(f"**Titre:** {offer2_data['title']}")
+                    st.markdown(f"**Entreprise:** {offer2_data['company_name']}")
+                    st.markdown(
+                        f"**Profil:** {offer2_data['profile_category'] or 'N/A'}"
+                    )
+                    st.markdown(f"**Contrat:** {offer2_data['contract_type'] or 'N/A'}")
+                    st.markdown(f"**Localisation:** {offer2_data['location']}")
+                    if offer2_data["skills_extracted"]:
+                        st.markdown(
+                            f"**Compétences:** {', '.join(offer2_data['skills_extracted'][:10])}"
+                        )
+                        if len(offer2_data["skills_extracted"]) > 10:
+                            st.caption(
+                                f"... et {len(offer2_data['skills_extracted']) - 10} autres"
+                            )
+
+                # Métriques de similarité
+                st.markdown("---")
+                st.subheader("🎯 Métriques de similarité")
+
+                col1, col2 = st.columns(2)
+
+                with col1:
+                    st.markdown(
+                        f'<div class="similarity-score">{similarity:.1%}<br><small>Similarité cosinus</small></div>',
+                        unsafe_allow_html=True,
+                    )
+
+                with col2:
+                    st.markdown(
+                        f'<div class="similarity-score">{euclidean_dist:.2f}<br><small>Distance euclidienne</small></div>',
+                        unsafe_allow_html=True,
+                    )
+
+                # Interprétation
+                st.markdown("---")
+                st.markdown("**📌 Interprétation:**")
+
+                col1, col2 = st.columns(2)
+
+                with col1:
+                    st.markdown("**Similarité cosinus:**")
+                    st.caption(
+                        "Mesure l'orientation des offres (0% = opposées, 100% = identiques). Compare le contenu global sans tenir compte du volume de texte."
+                    )
+                    if similarity >= 0.9:
+                        st.success(
+                            "🟢 **Très similaire** - Les offres sont presque identiques"
+                        )
+                    elif similarity >= 0.75:
+                        st.info("🔵 **Similaire** - Beaucoup de points communs")
+                    elif similarity >= 0.5:
+                        st.warning(
+                            "🟡 **Moyennement similaire** - Quelques différences notables"
+                        )
+                    else:
+                        st.error("🔴 **Peu similaire** - Offres assez différentes")
+
+                with col2:
+                    st.markdown("**Distance euclidienne:**")
+                    st.caption(
+                        "Mesure la distance directe entre les offres. Plus la distance est faible, plus les offres sont proches en termes de densité d'informations."
+                    )
+                    if euclidean_dist <= 2.0:
+                        st.success(
+                            "🟢 **Très proche** - Distance très faible entre les vecteurs"
+                        )
+                    elif euclidean_dist <= 5.0:
+                        st.info("🔵 **Proche** - Distance modérée")
+                    elif euclidean_dist <= 10.0:
+                        st.warning("🟡 **Éloignée** - Distance significative")
+                    else:
+                        st.error(
+                            "🔴 **Très éloignée** - Grande distance entre les vecteurs"
+                        )
+
+                # Compétences en commun
+                if offer1_data["skills_extracted"] and offer2_data["skills_extracted"]:
+                    st.markdown("---")
+                    st.subheader("🔗 Compétences en commun")
+
+                    skills_common = set(offer1_data["skills_extracted"]) & set(
+                        offer2_data["skills_extracted"]
+                    )
+
+                    if skills_common:
+                        st.markdown(f"**{len(skills_common)} compétences communes:**")
+                        st.markdown(f"*{', '.join(sorted(skills_common))}*")
+                    else:
+                        st.info("Aucune compétence en commun détectée")
 
 st.markdown("---")
 

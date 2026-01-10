@@ -228,6 +228,89 @@ def get_offers(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.get("/api/offers/list")
+def list_offers_simple(db: Session = Depends(get_db)):
+    """Liste simplifiée des offres (id + titre) pour les select boxes"""
+    try:
+        query = text(
+            """
+            SELECT offer_id, title, company_name
+            FROM fact_job_offers
+            ORDER BY collected_date DESC
+        """
+        )
+        result = db.execute(query)
+        offers = [
+            {
+                "offer_id": row[0],
+                "title": row[1],
+                "company_name": row[2],
+                "display": f"{row[0]} - {row[1]} ({row[2]})",
+            }
+            for row in result
+        ]
+        return {"offers": offers, "total": len(offers)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/offers/get/{offer_id}")
+def get_offer_by_id(offer_id: int, db: Session = Depends(get_db)):
+    """Récupère une offre complète avec son embedding"""
+    try:
+        query = text(
+            """
+            SELECT 
+                f.offer_id, f.title, f.company_name, f.description,
+                f.contract_type, f.profile_category, f.skills_extracted,
+                f.education_level, f.remote_possible, 
+                je.embedding, je.model_name,
+                s.source_name, f.published_date, f.collected_date,
+                r.nom_commune, r.nom_region
+            FROM fact_job_offers f
+            LEFT JOIN dim_sources s ON f.source_id = s.source_id
+            LEFT JOIN ref_communes_france r ON f.commune_id = r.commune_id
+            LEFT JOIN job_embeddings je ON f.offer_id = je.offer_id
+            WHERE f.offer_id = :offer_id
+        """
+        )
+        result = db.execute(query, {"offer_id": offer_id})
+        row = result.fetchone()
+
+        if not row:
+            raise HTTPException(status_code=404, detail="Offre non trouvée")
+
+        # Construire la localisation
+        location_parts = []
+        if row[14]:  # nom_commune
+            location_parts.append(row[14])
+        if row[15]:  # nom_region
+            location_parts.append(row[15])
+        location = ", ".join(location_parts) if location_parts else "Non spécifié"
+
+        return {
+            "offer_id": row[0],
+            "title": row[1],
+            "company_name": row[2],
+            "description": row[3],
+            "contract_type": row[4],
+            "profile_category": row[5],
+            "skills_extracted": row[6] if row[6] else [],
+            "education_level": row[7],
+            "remote_possible": row[8] if row[8] else False,
+            "embedding": row[9] if row[9] else None,
+            "embedding_model": row[10] if row[10] else None,
+            "source": row[11],
+            "published_date": row[12].isoformat() if row[12] else None,
+            "collected_date": row[13].isoformat() if row[13] else None,
+            "location": location,
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.get("/api/offers/count")
 def count_offers(
     source: Optional[str] = Query(None),
