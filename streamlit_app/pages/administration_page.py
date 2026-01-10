@@ -334,4 +334,15 @@ if st.button("🚀 Scraper et analyser", type="primary", use_container_width=Tru
             if "nlp_results" in result:
                 display_nlp_results(result["nlp_results"])
         else:
-            st.error("❌ Échec du scraping. Vérifiez l'identifiant et réessayez.")
+            # Afficher le message d'erreur spécifique si disponible
+            error_message = result.get("error") if result else None
+            if error_message and "Doublon détecté" in error_message:
+                st.warning(f"⚠️ {error_message}")
+                st.info(
+                    "💡 Cette offre existe déjà dans la base de données avec un contenu quasi-identique."
+                )
+            else:
+                default_msg = "Vérifiez l'identifiant et réessayez."
+                st.error(
+                    f"❌ Échec du scraping. {error_message if error_message else default_msg}"
+                )

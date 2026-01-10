@@ -29,7 +29,7 @@ logger = logging.getLogger("database_saver")
 
 def save_offer_to_database(
     raw_data: Dict, nlp_results: Dict, database_url: str
-) -> bool:
+) -> Dict:
     """
     Sauvegarder une offre complète en base de données avec toutes les dimensions
 
@@ -39,11 +39,15 @@ def save_offer_to_database(
         database_url: URL de connexion PostgreSQL
 
     Returns:
-        True si succès, False sinon
+        Dict avec {success: bool, duplicate: bool, message: str, offer_id: int}
     """
     if not database_url:
         logger.error("❌ DATABASE_URL non configurée")
-        return False
+        return {
+            "success": False,
+            "duplicate": False,
+            "message": "DATABASE_URL non configurée",
+        }
 
     try:
         conn = psycopg2.connect(database_url)
@@ -54,6 +58,31 @@ def save_offer_to_database(
         skills = nlp_results.get("steps", {}).get("skills_extracted", {})
         info = nlp_results.get("steps", {}).get("info_extraction", {})
         category_info = nlp_results.get("steps", {}).get("category", {})
+
+        # ===== VÉRIFICATION DE DOUBLON PAR EMBEDDING =====
+        embedding_vector = final.get("embedding_vector")
+        if embedding_vector:
+            logger.info("🔍 Vérification des doublons par similarité d'embedding...")
+            duplicate_check = _check_duplicate_by_embedding(
+                cursor, embedding_vector, threshold=0.95
+            )
+
+            if duplicate_check:
+                offer_id, similarity, title = duplicate_check
+                logger.warning(
+                    f"⚠️ Offre similaire trouvée (similarité: {similarity:.2%})"
+                )
+                logger.warning(f"   Offre existante #{offer_id}: {title[:80]}")
+                cursor.close()
+                conn.close()
+                return {
+                    "success": False,
+                    "duplicate": True,
+                    "message": f"Offre déjà présente en BDD (similarité: {similarity:.2%})",
+                    "existing_offer_id": offer_id,
+                    "similarity": similarity,
+                    "existing_title": title,
+                }
 
         # ===== DIMENSIONS =====
 
@@ -165,7 +194,12 @@ def save_offer_to_database(
         cursor.close()
         conn.close()
 
-        return True
+        return {
+            "success": True,
+            "duplicate": False,
+            "message": "Offre sauvegardée avec succès",
+            "offer_id": offer_id,
+        }
 
     except Exception as e:
         logger.error(f"❌ Erreur sauvegarde BDD: {e}")
@@ -175,12 +209,54 @@ def save_offer_to_database(
         if "conn" in locals():
             conn.rollback()
             conn.close()
-        return False
+        return {"success": False, "duplicate": False, "message": f"Erreur: {str(e)}"}
 
 
 # ============================================================================
 # FONCTIONS HELPER
 # ============================================================================
+
+
+def _check_duplicate_by_embedding(
+    cursor, embedding_vector: list, threshold: float = 0.95
+):
+    """
+    Vérifie si un embedding similaire existe déjà dans la BDD
+
+    Args:
+        cursor: Curseur PostgreSQL
+        embedding_vector: Vecteur d'embedding (liste de floats)
+        threshold: Seuil de similarité (0.95 = 95%)
+
+    Returns:
+        Tuple (offer_id, similarity, title) si doublon trouvé, None sinon
+    """
+    try:
+        # Recherche par similarité cosinus avec pgvector
+        # 1 - cosine_distance = similarité (plus proche de 1 = plus similaire)
+        query = """
+            SELECT 
+                jo.offer_id,
+                1 - (je.embedding <=> %s::vector) as similarity,
+                jo.title
+            FROM job_embeddings je
+            JOIN fact_job_offers jo ON je.offer_id = jo.offer_id
+            WHERE 1 - (je.embedding <=> %s::vector) >= %s
+            ORDER BY similarity DESC
+            LIMIT 1
+        """
+
+        cursor.execute(query, (embedding_vector, embedding_vector, threshold))
+        result = cursor.fetchone()
+
+        if result:
+            return result  # (offer_id, similarity, title)
+
+        return None
+
+    except Exception as e:
+        logger.warning(f"⚠️ Erreur vérification doublon: {e}")
+        return None
 
 
 def _get_or_create_source(cursor, conn, source_name: str) -> int:

@@ -360,7 +360,7 @@ def process_nlp(job_data: Dict) -> Dict:
 # ============================================================================
 
 
-def save_to_database(raw_data: Dict, nlp_results: Dict) -> bool:
+def save_to_database(raw_data: Dict, nlp_results: Dict) -> Dict:
     """
     Wrapper pour sauvegarder l'offre en BDD
     La logique complète est dans database_saver.py
@@ -370,7 +370,7 @@ def save_to_database(raw_data: Dict, nlp_results: Dict) -> bool:
         nlp_results: Résultats NLP
 
     Returns:
-        True si succès, False sinon
+        Dict avec {success: bool, duplicate: bool, message: str, ...}
     """
     return save_offer_to_database(raw_data, nlp_results, DATABASE_URL)
 
@@ -410,13 +410,33 @@ async def scrape_offer(request: ScrapeRequest):
 
         # 3. Sauvegarde en BDD (optionnelle)
         saved_to_db = False
+        db_result = None
         if request.save_to_db:
             logger.info("💾 Sauvegarde en BDD demandée...")
-            saved_to_db = save_to_database(raw_data, nlp_results)
+            db_result = save_to_database(raw_data, nlp_results)
+
+            if db_result.get("duplicate"):
+                # Doublon détecté
+                logger.warning(f"⚠️ {db_result['message']}")
+                logger.warning(
+                    f"   Offre existante: {db_result.get('existing_title', 'N/A')}"
+                )
+                return ScrapeResponse(
+                    success=False,
+                    source=request.source,
+                    raw_data=raw_data,
+                    nlp_results=nlp_results,
+                    saved_to_db=False,
+                    error=f"Doublon détecté: {db_result['message']} (Offre #{db_result.get('existing_offer_id')})",
+                )
+
+            saved_to_db = db_result.get("success", False)
             if saved_to_db:
                 logger.info("✅ Sauvegarde en BDD réussie")
             else:
-                logger.warning("⚠️ Sauvegarde en BDD échouée")
+                logger.warning(
+                    f"⚠️ Sauvegarde en BDD échouée: {db_result.get('message')}"
+                )
 
         # 4. Réponse
         return ScrapeResponse(
