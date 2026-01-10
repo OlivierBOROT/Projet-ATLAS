@@ -85,8 +85,6 @@ if "current_page" not in st.session_state:
     st.session_state.current_page = 1
 
 with st.sidebar:
-    st.header("🔍 Filtres")
-
     # Input pour aller à une page spécifique
     st.subheader("📄 Navigation rapide")
     page_jump = st.number_input(
@@ -98,6 +96,8 @@ with st.sidebar:
     )
 
     st.markdown("---")
+
+    st.header("🔍 Filtres")
 
     # Filtre par source
     source_options = {
@@ -175,6 +175,26 @@ with st.sidebar:
     )
     education_levels = [e[1] for e in education_filter] if education_filter else []
 
+    # Filtre par ville
+    @st.cache_data(ttl=600)
+    def load_cities_list():
+        """Charge la liste des villes disponibles"""
+        try:
+            response = requests.get(f"{API_URL}/api/cities/list", timeout=5)
+            if response.status_code == 200:
+                return response.json().get("cities", [])
+            return []
+        except:
+            return []
+
+    cities_list = load_cities_list()
+    cities_filter = st.multiselect(
+        "🏙️ Ville(s)",
+        cities_list,
+        default=[],
+        key=f"filter_cities_{st.session_state.reset_counter}",
+    )
+
     st.markdown("---")
 
     # Toggle pour afficher la carte
@@ -231,6 +251,7 @@ def load_offers_paginated(
     remote=None,
     skills=None,
     education=None,
+    cities=None,
 ):
     """Charge les offres avec pagination et filtres"""
     try:
@@ -250,6 +271,8 @@ def load_offers_paginated(
             params["skills"] = ",".join(skills)
         if education:
             params["education"] = ",".join([str(e) for e in education])
+        if cities:
+            params["cities"] = ",".join(cities)
 
         response = requests.get(f"{API_URL}/api/offers", params=params, timeout=10)
         return response.json()
@@ -260,7 +283,13 @@ def load_offers_paginated(
 
 @st.cache_data(ttl=300)
 def count_total_offers(
-    source=None, contract=None, profile=None, remote=None, skills=None, education=None
+    source=None,
+    contract=None,
+    profile=None,
+    remote=None,
+    skills=None,
+    education=None,
+    cities=None,
 ):
     """Compte le nombre total d'offres avec filtres"""
     try:
@@ -277,6 +306,8 @@ def count_total_offers(
             params["skills"] = ",".join(skills)
         if education:
             params["education"] = ",".join([str(e) for e in education])
+        if cities:
+            params["cities"] = ",".join(cities)
 
         response = requests.get(f"{API_URL}/api/offers/count", params=params, timeout=5)
         return response.json().get("total", 0)
@@ -286,7 +317,13 @@ def count_total_offers(
 
 @st.cache_data(ttl=300)
 def load_map_data(
-    source=None, contract=None, profile=None, remote=None, skills=None, education=None
+    source=None,
+    contract=None,
+    profile=None,
+    remote=None,
+    skills=None,
+    education=None,
+    cities=None,
 ):
     """Charge les données géographiques pour la carte"""
     try:
@@ -303,6 +340,8 @@ def load_map_data(
             params["skills"] = ",".join(skills)
         if education:
             params["education"] = ",".join([str(e) for e in education])
+        if cities:
+            params["cities"] = ",".join(cities)
 
         response = requests.get(f"{API_URL}/api/map-data", params=params, timeout=10)
         return response.json()
@@ -334,10 +373,11 @@ profiles = profile_filter if profile_filter else None
 remote = remote_filter if remote_filter else None
 skills = skills_filter if skills_filter else None
 education = education_levels if education_levels else None
+cities = cities_filter if cities_filter else None
 
 # Charger le nombre total d'offres avec filtres
 total_offers = count_total_offers(
-    sources, contracts, profiles, remote, skills, education
+    sources, contracts, profiles, remote, skills, education, cities
 )
 total_pages = max(1, (total_offers + OFFERS_PER_PAGE - 1) // OFFERS_PER_PAGE)
 
@@ -357,6 +397,7 @@ offers_data = load_offers_paginated(
     remote=remote,
     skills=skills,
     education=education,
+    cities=cities,
 )
 
 offers = offers_data.get("offers", [])
@@ -392,11 +433,11 @@ if show_map:
     with st.spinner("Chargement de la carte..."):
         # Charger les données géographiques avec les mêmes filtres
         map_data = load_map_data(
-            sources, contracts, profiles, remote, skills, education
+            sources, contracts, profiles, remote, skills, education, cities
         )
-        cities = map_data.get("cities", [])
+        cities_map = map_data.get("cities", [])
 
-        if cities:
+        if cities_map:
             # Créer la carte centrée sur la France
             m = folium.Map(
                 location=[46.603354, 1.888334],  # Centre de la France
@@ -430,7 +471,7 @@ if show_map:
             )
 
             # Ajouter les marqueurs pour chaque ville
-            for city_data in cities:
+            for city_data in cities_map:
                 # Créer le popup avec les informations
                 popup_html = f"""
                     <div style="font-family: Arial; min-width: 200px;">
@@ -467,7 +508,7 @@ if show_map:
             # Afficher la carte
             st_folium(m, width=None, height=500)
 
-            st.caption(f"📍 {len(cities)} villes avec des offres d'emploi")
+            st.caption(f"📍 {len(cities_map)} villes avec des offres d'emploi")
         else:
             st.info("Aucune donnée géographique disponible pour ces filtres")
 
