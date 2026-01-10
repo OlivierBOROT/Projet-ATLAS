@@ -19,14 +19,6 @@ load_dotenv()
 # Configuration
 API_URL = os.getenv("API_URL", "http://localhost:8000")
 
-# Configuration de la page
-st.set_page_config(
-    page_title="ATLAS - Découvrir les offres",
-    page_icon="🔍",
-    layout="wide",
-    initial_sidebar_state="expanded",
-)
-
 # CSS personnalisé
 st.markdown(
     """

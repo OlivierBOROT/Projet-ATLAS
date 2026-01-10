@@ -24,8 +24,6 @@ except ImportError as e:
     st.error(f"❌ Modules NLP non disponibles: {e}")
     NLP_AVAILABLE = False
 
-st.set_page_config(page_title="Comparaisons - ATLAS", page_icon="⚖️", layout="wide")
-
 # CSS personnalisé
 st.markdown(
     """

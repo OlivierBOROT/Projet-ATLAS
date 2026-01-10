@@ -2,8 +2,6 @@ import streamlit as st
 import requests
 import json
 
-st.set_page_config(page_title="Administration - ATLAS", page_icon="⚙️", layout="wide")
-
 st.title("⚙️ Administration - Scraping à la demande")
 
 st.markdown("---")
