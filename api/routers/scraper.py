@@ -135,8 +135,6 @@ def scrape_france_travail_offer(offer_id: str) -> Dict:
         token = collector.authenticate()
 
         # Récupération de l'offre via API
-        import requests
-
         offer_response = requests.get(
             f"https://api.francetravail.io/partenaire/offresdemploi/v2/offres/{offer_id}",
             headers={"Authorization": f"Bearer {token}"},
