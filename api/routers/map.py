@@ -30,6 +30,10 @@ def get_map_data(
     skills: Optional[str] = Query(None),
     education: Optional[str] = Query(None),
     cities: Optional[str] = Query(None),
+    postal_codes: Optional[str] = Query(None),
+    experience: Optional[int] = Query(None),
+    date_from: Optional[str] = Query(None),
+    min_salary: Optional[int] = Query(None),
     db: Session = Depends(get_db),
 ):
     """Données géographiques pour la carte (offres groupées par ville avec GPS)"""
@@ -83,6 +87,25 @@ def get_map_data(
             where_clauses.append(f"r.nom_commune IN ({placeholders})")
             for i, city in enumerate(city_list):
                 params[f"city_{i}"] = city.strip()
+
+        if postal_codes:
+            postal_list = postal_codes.split(",")
+            placeholders = ",".join([f":postal_{i}" for i in range(len(postal_list))])
+            where_clauses.append(f"r.code_postal IN ({placeholders})")
+            for i, postal in enumerate(postal_list):
+                params[f"postal_{i}"] = postal.strip()
+
+        if experience is not None and experience > 0:
+            where_clauses.append("f.experience_years >= :experience")
+            params["experience"] = experience
+
+        if date_from:
+            where_clauses.append("f.published_date >= :date_from")
+            params["date_from"] = date_from
+
+        if min_salary is not None and min_salary > 0:
+            where_clauses.append("f.salary_min >= :min_salary")
+            params["min_salary"] = min_salary
 
         where_sql = " AND " + " AND ".join(where_clauses) if where_clauses else ""
 

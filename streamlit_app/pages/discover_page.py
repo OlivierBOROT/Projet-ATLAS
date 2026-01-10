@@ -195,6 +195,45 @@ with st.sidebar:
         key=f"filter_cities_{st.session_state.reset_counter}",
     )
 
+    # Filtre par code postal
+    postal_code_input = st.text_input(
+        "📮 Code postal",
+        placeholder="Ex: 75001, 69002",
+        key=f"filter_postal_{st.session_state.reset_counter}",
+    )
+    postal_codes_filter = (
+        [p.strip() for p in postal_code_input.split(",") if p.strip()]
+        if postal_code_input
+        else []
+    )
+
+    # Filtre par années d'expérience
+    experience_filter = st.slider(
+        "💼 Années d'expérience minimum",
+        min_value=0,
+        max_value=15,
+        value=0,
+        step=1,
+        key=f"filter_experience_{st.session_state.reset_counter}",
+    )
+
+    # Filtre par date de publication
+    date_filter = st.date_input(
+        "📅 Offres publiées depuis le",
+        value=None,
+        key=f"filter_date_{st.session_state.reset_counter}",
+    )
+
+    # Filtre par salaire minimum
+    salary_filter = st.number_input(
+        "💰 Salaire minimum (K€/an)",
+        min_value=0,
+        max_value=200,
+        value=0,
+        step=5,
+        key=f"filter_salary_{st.session_state.reset_counter}",
+    )
+
     st.markdown("---")
 
     # Toggle pour afficher la carte
@@ -252,6 +291,10 @@ def load_offers_paginated(
     skills=None,
     education=None,
     cities=None,
+    postal_codes=None,
+    experience=None,
+    date_from=None,
+    min_salary=None,
 ):
     """Charge les offres avec pagination et filtres"""
     try:
@@ -273,6 +316,14 @@ def load_offers_paginated(
             params["education"] = ",".join([str(e) for e in education])
         if cities:
             params["cities"] = ",".join(cities)
+        if postal_codes:
+            params["postal_codes"] = ",".join(postal_codes)
+        if experience and experience > 0:
+            params["experience"] = str(experience)
+        if date_from:
+            params["date_from"] = date_from.isoformat()
+        if min_salary and min_salary > 0:
+            params["min_salary"] = str(min_salary)
 
         response = requests.get(f"{API_URL}/api/offers", params=params, timeout=10)
         return response.json()
@@ -290,6 +341,10 @@ def count_total_offers(
     skills=None,
     education=None,
     cities=None,
+    postal_codes=None,
+    experience=None,
+    date_from=None,
+    min_salary=None,
 ):
     """Compte le nombre total d'offres avec filtres"""
     try:
@@ -308,6 +363,14 @@ def count_total_offers(
             params["education"] = ",".join([str(e) for e in education])
         if cities:
             params["cities"] = ",".join(cities)
+        if postal_codes:
+            params["postal_codes"] = ",".join(postal_codes)
+        if experience and experience > 0:
+            params["experience"] = str(experience)
+        if date_from:
+            params["date_from"] = date_from.isoformat()
+        if min_salary and min_salary > 0:
+            params["min_salary"] = str(min_salary)
 
         response = requests.get(f"{API_URL}/api/offers/count", params=params, timeout=5)
         return response.json().get("total", 0)
@@ -324,6 +387,10 @@ def load_map_data(
     skills=None,
     education=None,
     cities=None,
+    postal_codes=None,
+    experience=None,
+    date_from=None,
+    min_salary=None,
 ):
     """Charge les données géographiques pour la carte"""
     try:
@@ -342,6 +409,14 @@ def load_map_data(
             params["education"] = ",".join([str(e) for e in education])
         if cities:
             params["cities"] = ",".join(cities)
+        if postal_codes:
+            params["postal_codes"] = ",".join(postal_codes)
+        if experience and experience > 0:
+            params["experience"] = str(experience)
+        if date_from:
+            params["date_from"] = date_from.isoformat()
+        if min_salary and min_salary > 0:
+            params["min_salary"] = str(min_salary)
 
         response = requests.get(f"{API_URL}/api/map-data", params=params, timeout=10)
         return response.json()
@@ -374,10 +449,24 @@ remote = remote_filter if remote_filter else None
 skills = skills_filter if skills_filter else None
 education = education_levels if education_levels else None
 cities = cities_filter if cities_filter else None
+postal_codes = postal_codes_filter if postal_codes_filter else None
+experience = experience_filter if experience_filter > 0 else None
+date_from = date_filter if date_filter else None
+min_salary = salary_filter if salary_filter > 0 else None
 
 # Charger le nombre total d'offres avec filtres
 total_offers = count_total_offers(
-    sources, contracts, profiles, remote, skills, education, cities
+    sources,
+    contracts,
+    profiles,
+    remote,
+    skills,
+    education,
+    cities,
+    postal_codes,
+    experience,
+    date_from,
+    min_salary,
 )
 total_pages = max(1, (total_offers + OFFERS_PER_PAGE - 1) // OFFERS_PER_PAGE)
 
@@ -398,6 +487,10 @@ offers_data = load_offers_paginated(
     skills=skills,
     education=education,
     cities=cities,
+    postal_codes=postal_codes,
+    experience=experience,
+    date_from=date_from,
+    min_salary=min_salary,
 )
 
 offers = offers_data.get("offers", [])
@@ -433,7 +526,17 @@ if show_map:
     with st.spinner("Chargement de la carte..."):
         # Charger les données géographiques avec les mêmes filtres
         map_data = load_map_data(
-            sources, contracts, profiles, remote, skills, education, cities
+            sources,
+            contracts,
+            profiles,
+            remote,
+            skills,
+            education,
+            cities,
+            postal_codes,
+            experience,
+            date_from,
+            min_salary,
         )
         cities_map = map_data.get("cities", [])
 
