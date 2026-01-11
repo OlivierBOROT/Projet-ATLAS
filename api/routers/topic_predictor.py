@@ -81,15 +81,31 @@ class TopicPredictor:
         """
         # Trouver le modèle
         if model_path is None:
-            # Chercher dans le dossier NLP/scripts
-            nlp_scripts_dir = Path(__file__).parent.parent / "NLP" / "scripts"
+            # Essayer plusieurs chemins (compatible local et Docker)
+            possible_paths = [
+                Path(__file__).parent.parent.parent
+                / "NLP"
+                / "scripts",  # Local depuis api/routers
+                Path(__file__).parent.parent
+                / "NLP"
+                / "scripts",  # Docker depuis /app/routers
+                Path("/app/NLP/scripts"),  # Docker chemin absolu
+            ]
 
-            # Chercher tous les fichiers lda_model_*.pkl
-            model_files = list(nlp_scripts_dir.glob("lda_model_*.pkl"))
+            nlp_scripts_dir = None
+            model_files = []
+
+            for path in possible_paths:
+                if path.exists():
+                    model_files = list(path.glob("lda_model_*.pkl"))
+                    if model_files:
+                        nlp_scripts_dir = path
+                        break
 
             if not model_files:
+                tried_paths = "\n  - ".join(str(p) for p in possible_paths)
                 raise FileNotFoundError(
-                    f"❌ Aucun modèle LDA trouvé dans {nlp_scripts_dir}\n"
+                    f"❌ Aucun modèle LDA trouvé dans les chemins:\n  - {tried_paths}\n"
                     "Exécutez d'abord NLP/scripts/topic_modeling_full.py"
                 )
 

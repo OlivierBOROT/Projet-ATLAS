@@ -138,6 +138,10 @@ def save_offer_to_database(
 
         logger.info("💾 Insertion dans fact_job_offers...")
 
+        # Extraire contract_type de manière sécurisée
+        contract_types = final.get("contract_types", [])
+        contract_type = contract_types[0] if contract_types else None
+
         offer_id = _insert_or_update_offer(
             cursor,
             conn,
@@ -151,7 +155,7 @@ def save_offer_to_database(
             description_cleaned=final.get("description_cleaned"),
             url=raw_data.get("url"),
             company_name=raw_data.get("company_name"),
-            contract_type=final.get("contract_types", [None])[0],
+            contract_type=contract_type,
             salary_min=salary_min,
             salary_max=salary_max,
             published_date=_parse_published_date(raw_data.get("published_date")),

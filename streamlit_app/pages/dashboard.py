@@ -159,6 +159,22 @@ def load_advanced_stats():
         return {"salary_fill_rate": 0, "avg_publication_delay": 0, "remote_rate": 0}
 
 
+@st.cache_data(ttl=60)
+def load_today_offers_count():
+    """Charge le nombre d'offres collectées aujourd'hui"""
+    try:
+        # Calculer la date d'hier
+        from datetime import datetime, timedelta
+
+        yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+        response = requests.get(
+            f"{API_URL}/api/offers/count", params={"date_from": yesterday}
+        )
+        return response.json().get("total", 0)
+    except:
+        return 0
+
+
 @st.cache_data(ttl=300)
 def load_available_locations(location_type):
     """Charge la liste des villes ou régions disponibles"""
@@ -251,6 +267,7 @@ profiles_stats = load_profiles_stats()
 salaries_stats = load_salaries_stats()
 timeline_stats = load_timeline_stats()
 advanced_stats = load_advanced_stats()
+today_count = load_today_offers_count()
 
 # ============================================================================
 # KPIs PRINCIPAUX
@@ -265,7 +282,7 @@ with col1:
     st.metric(
         label="📋 Offres totales",
         value=f"{total_offers:,}",
-        delta="+12 aujourd'hui" if total_offers > 0 else None,
+        delta=f"+{today_count} aujourd'hui" if today_count > 0 else None,
     )
 
 with col2:

@@ -14,20 +14,43 @@ import requests
 # Configuration
 API_URL = os.getenv("API_URL", "http://localhost:8000")
 
-# Ajouter le chemin des modules NLP
-nlp_modules_path = Path(__file__).parent.parent / "NLP" / "modules"
-sys.path.insert(0, str(nlp_modules_path))
-
+# Ajouter le chemin des modules NLP (compatible local et Docker)
 try:
+    # Essayer d'abord le chemin relatif (exécution locale)
+    project_root = Path(__file__).parent.parent.parent
+    nlp_modules_path = project_root / "NLP" / "modules"
+    sys.path.insert(0, str(nlp_modules_path))
+
     from text_cleaner import TextCleaner
     from skill_extractor import SkillExtractor
     from info_extractor import InfoExtractor
     from embedding_generator import EmbeddingGenerator
 
     NLP_AVAILABLE = True
-except ImportError as e:
-    st.error(f"❌ Modules NLP non disponibles: {e}")
-    NLP_AVAILABLE = False
+except ImportError:
+    try:
+        # Essayer le chemin Docker (NLP dans le même dossier)
+        nlp_modules_path = Path(__file__).parent.parent / "NLP" / "modules"
+        sys.path.insert(0, str(nlp_modules_path))
+
+        from text_cleaner import TextCleaner
+        from skill_extractor import SkillExtractor
+        from info_extractor import InfoExtractor
+        from embedding_generator import EmbeddingGenerator
+
+        NLP_AVAILABLE = True
+    except ImportError:
+        try:
+            # Essayer l'import direct (si NLP est dans PYTHONPATH)
+            from NLP.modules.text_cleaner import TextCleaner
+            from NLP.modules.skill_extractor import SkillExtractor
+            from NLP.modules.info_extractor import InfoExtractor
+            from NLP.modules.embedding_generator import EmbeddingGenerator
+
+            NLP_AVAILABLE = True
+        except ImportError as e:
+            st.error(f"❌ Modules NLP non disponibles: {e}")
+            NLP_AVAILABLE = False
 
 # CSS personnalisé
 st.markdown(
