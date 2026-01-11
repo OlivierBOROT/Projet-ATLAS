@@ -4,16 +4,24 @@ Router pour la gestion de la carte géographique
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from sqlalchemy import text
+from sqlalchemy import create_engine, text
 from typing import Optional
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 router = APIRouter()
 
+# Configuration database
+DATABASE_URL = os.getenv("DATABASE_URL")
+engine = create_engine(DATABASE_URL)
+from sqlalchemy.orm import sessionmaker
+
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
 
 def get_db():
-    """Dépendance pour obtenir la session de base de données"""
-    from main import SessionLocal
-
     db = SessionLocal()
     try:
         yield db
@@ -34,6 +42,7 @@ def get_map_data(
     experience: Optional[int] = Query(None),
     date_from: Optional[str] = Query(None),
     min_salary: Optional[int] = Query(None),
+    search: Optional[str] = Query(None),
     db: Session = Depends(get_db),
 ):
     """Données géographiques pour la carte (offres groupées par ville avec GPS)"""
@@ -106,6 +115,12 @@ def get_map_data(
         if min_salary is not None and min_salary > 0:
             where_clauses.append("f.salary_min >= :min_salary")
             params["min_salary"] = min_salary
+
+        if search:
+            where_clauses.append(
+                "(LOWER(f.title) LIKE LOWER(:search) OR LOWER(f.company_name) LIKE LOWER(:search))"
+            )
+            params["search"] = f"%{search}%"
 
         where_sql = " AND " + " AND ".join(where_clauses) if where_clauses else ""
 

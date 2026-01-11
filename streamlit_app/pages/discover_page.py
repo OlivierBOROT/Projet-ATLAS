@@ -116,16 +116,13 @@ with st.sidebar:
     profile_filter = st.multiselect(
         "Profil technique",
         [
-            "Développeur Backend",
-            "Développeur Frontend",
-            "Développeur Full Stack",
-            "Data Scientist",
-            "Data Engineer",
-            "DevOps",
-            "Mobile",
+            "Backend Developer",
+            "Frontend Developer",
+            "Data Science / ML",
+            "Data Engineering",
+            "DevOps / SRE",
+            "Cloud Engineer",
             "Business Intelligence",
-            "Cybersécurité",
-            "Cloud",
             "Généraliste",
         ],
         default=[],
@@ -136,6 +133,14 @@ with st.sidebar:
     remote_filter = st.checkbox(
         "Télétravail possible uniquement",
         key=f"filter_remote_{st.session_state.reset_counter}",
+    )
+
+    # Filtre par recherche (mot-clé)
+    search_query = st.text_input(
+        "🔎 Recherche par mot-clé",
+        placeholder="Ex: Python, Data, Paris...",
+        help="Recherche dans le titre ou le nom de l'entreprise",
+        key=f"filter_search_{st.session_state.reset_counter}",
     )
 
     # Filtre par compétences
@@ -287,6 +292,7 @@ def load_offers_paginated(
     experience=None,
     date_from=None,
     min_salary=None,
+    search=None,
 ):
     """Charge les offres avec pagination et filtres"""
     try:
@@ -316,6 +322,8 @@ def load_offers_paginated(
             params["date_from"] = date_from.isoformat()
         if min_salary and min_salary > 0:
             params["min_salary"] = str(min_salary)
+        if search:
+            params["search"] = search
 
         response = requests.get(f"{API_URL}/api/offers", params=params, timeout=10)
         return response.json()
@@ -337,6 +345,7 @@ def count_total_offers(
     experience=None,
     date_from=None,
     min_salary=None,
+    search=None,
 ):
     """Compte le nombre total d'offres avec filtres"""
     try:
@@ -363,6 +372,8 @@ def count_total_offers(
             params["date_from"] = date_from.isoformat()
         if min_salary and min_salary > 0:
             params["min_salary"] = str(min_salary)
+        if search:
+            params["search"] = search
 
         response = requests.get(f"{API_URL}/api/offers/count", params=params, timeout=5)
         return response.json().get("total", 0)
@@ -383,6 +394,7 @@ def load_map_data(
     experience=None,
     date_from=None,
     min_salary=None,
+    search=None,
 ):
     """Charge les données géographiques pour la carte"""
     try:
@@ -409,6 +421,8 @@ def load_map_data(
             params["date_from"] = date_from.isoformat()
         if min_salary and min_salary > 0:
             params["min_salary"] = str(min_salary)
+        if search:
+            params["search"] = search
 
         response = requests.get(f"{API_URL}/api/map-data", params=params, timeout=10)
         return response.json()
@@ -445,6 +459,7 @@ postal_codes = postal_codes_filter if postal_codes_filter else None
 experience = experience_filter if experience_filter > 0 else None
 date_from = date_filter if date_filter else None
 min_salary = salary_filter if salary_filter > 0 else None
+search = search_query if search_query else None
 
 # Charger le nombre total d'offres avec filtres
 total_offers = count_total_offers(
@@ -459,6 +474,7 @@ total_offers = count_total_offers(
     experience,
     date_from,
     min_salary,
+    search,
 )
 total_pages = max(1, (total_offers + OFFERS_PER_PAGE - 1) // OFFERS_PER_PAGE)
 
@@ -483,6 +499,7 @@ offers_data = load_offers_paginated(
     experience=experience,
     date_from=date_from,
     min_salary=min_salary,
+    search=search,
 )
 
 offers = offers_data.get("offers", [])
@@ -529,6 +546,7 @@ if show_map:
             experience,
             date_from,
             min_salary,
+            search,
         )
         cities_map = map_data.get("cities", [])
 
