@@ -28,7 +28,6 @@ Le projet vise à :
 ## 📹 Vidéo de démonstration
 
 > 🎥 **Installation et utilisation** : [Lien vers la vidéo](#)  
-> _(Remplacez le # par l'URL de votre vidéo)_
 
 ## 🚀 Installation et lancement
 
@@ -41,7 +40,7 @@ La méthode la plus simple pour démarrer l'ensemble du projet :
 git clone <url-du-repo>
 cd Projet-ATLAS
 
-# Lancer tous les services (API + Streamlit + Base de données)
+# Lancer tous les services (API + Streamlit)
 docker-compose up --build -d
 
 # Vérifier que les containers sont démarrés
