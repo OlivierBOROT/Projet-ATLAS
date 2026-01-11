@@ -5,9 +5,23 @@ import plotly.express as px
 import plotly.graph_objects as go
 import os
 from datetime import datetime, timedelta
+from pathlib import Path
 
 # Configuration
 API_URL = os.getenv("API_URL", "http://localhost:8000")
+
+# Afficher le logo dans la sidebar
+try:
+    # Essayer le chemin local (depuis streamlit_app/pages)
+    logo_path = Path(__file__).parent.parent.parent / "images" / "Logo.png"
+    if not logo_path.exists():
+        # Essayer le chemin Docker (depuis /app/pages)
+        logo_path = Path(__file__).parent.parent / "images" / "Logo.png"
+
+    if logo_path.exists():
+        st.sidebar.image(str(logo_path), use_container_width=True)
+except:
+    pass  # Si le logo n'est pas trouvé, continuer sans erreur
 
 # CSS personnalisé
 st.markdown(

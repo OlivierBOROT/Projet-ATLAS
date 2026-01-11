@@ -18,6 +18,9 @@ COPY streamlit_app/ ./
 # Copier le dossier NLP (pour la page comparaisons)
 COPY NLP/ ./NLP/
 
+# Copier le dossier images (pour le logo)
+COPY images/ ./images/
+
 # Télécharger le modèle spaCy français (nécessaire pour les comparaisons)
 RUN python -m spacy download fr_core_news_md
 EXPOSE 8501
