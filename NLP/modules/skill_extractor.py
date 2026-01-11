@@ -41,6 +41,7 @@ class SkillExtractor:
 
         # Skills techniques
         self.languages = set()
+        self.systems = set()
         self.frameworks = set()
         self.databases = set()
         self.cloud = set()
@@ -83,6 +84,7 @@ class SkillExtractor:
         # Regrouper toutes les skills techniques
         self.all_tech_skills = (
             self.languages
+            | self.systems
             | self.frameworks
             | self.databases
             | self.cloud
@@ -132,12 +134,15 @@ class SkillExtractor:
         # 1. Détection directe par mots-clés
         result = {
             "languages": self._find_skills(text_lower, self.languages),
+            "systems": self._find_skills(text_lower, self.systems),
             "frameworks": self._find_skills(text_lower, self.frameworks),
             "databases": self._find_skills(text_lower, self.databases),
             "cloud": self._find_skills(text_lower, self.cloud),
             "devops": self._find_skills(text_lower, self.devops),
             "bi": self._find_skills(text_lower, self.bi),
             "methods": self._find_skills(text_lower, self.methods),
+            "data_concepts": self._find_skills(text_lower, self.data_concepts),
+            "tools": self._find_skills(text_lower, self.tools),
             "security": self._find_skills(text_lower, self.security),
             "business_software": self._find_skills(text_lower, self.business_software),
             "soft_skills": self._find_skills(text_lower, self.soft_skills),
@@ -155,12 +160,15 @@ class SkillExtractor:
         result["all_tech_skills"] = sorted(
             set(
                 result["languages"]
+                + result["systems"]
                 + result["frameworks"]
                 + result["databases"]
                 + result["cloud"]
                 + result["devops"]
                 + result["bi"]
                 + result["methods"]
+                + result["data_concepts"]
+                + result["tools"]
                 + result["security"]
                 + result["business_software"]
             )
@@ -189,6 +197,7 @@ class SkillExtractor:
         """
         found_skills = {
             "languages": [],
+            "systems": [],
             "frameworks": [],
             "databases": [],
             "cloud": [],
@@ -225,6 +234,8 @@ class SkillExtractor:
 
         if skill_lower in self.languages:
             return "languages"
+        elif skill_lower in self.systems:
+            return "systems"
         elif skill_lower in self.frameworks:
             return "frameworks"
         elif skill_lower in self.databases:
@@ -237,6 +248,10 @@ class SkillExtractor:
             return "bi"
         elif skill_lower in self.methods:
             return "methods"
+        elif skill_lower in self.data_concepts:
+            return "data_concepts"
+        elif skill_lower in self.tools:
+            return "tools"
         elif skill_lower in self.security:
             return "security"
         elif skill_lower in self.business_software:
@@ -251,7 +266,6 @@ class SkillExtractor:
                 category_map = {
                     "bi_analytics": "bi",
                     "methodologies": "methods",
-                    "data_concepts": "methods",  # On met data concepts dans methods
                 }
                 return category_map.get(category, category)
 
@@ -292,12 +306,15 @@ class SkillExtractor:
         """Retourne un résultat vide"""
         return {
             "languages": [],
+            "systems": [],
             "frameworks": [],
             "databases": [],
             "cloud": [],
             "devops": [],
             "bi": [],
             "methods": [],
+            "data_concepts": [],
+            "tools": [],
             "security": [],
             "business_software": [],
             "soft_skills": [],
@@ -325,8 +342,8 @@ class SkillExtractor:
         for skill in skills["languages"]:
             weighted_skills[skill] = weighted_skills.get(skill, 0) + 3
 
-        # Frameworks & Databases (poids moyen-fort)
-        for skill in skills["frameworks"] + skills["databases"]:
+        # Systems & Frameworks & Databases (poids moyen-fort)
+        for skill in skills["systems"] + skills["frameworks"] + skills["databases"]:
             weighted_skills[skill] = weighted_skills.get(skill, 0) + 2
 
         # Autres tech (poids moyen)
@@ -335,6 +352,8 @@ class SkillExtractor:
             + skills["devops"]
             + skills["bi"]
             + skills["methods"]
+            + skills["data_concepts"]
+            + skills["tools"]
             + skills["security"]
             + skills["business_software"]
         ):

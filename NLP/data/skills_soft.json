@@ -233,8 +233,30 @@
       "context_patterns": ["fort engagement", "grande implication"]
     },
     "disponibilité": {
-      "synonyms": ["disponibilité", "disponibilite", "disponible"],
-      "context_patterns": ["grande disponibilité", "bonne disponibilité"]
+      "synonyms": ["disponibilité", "disponibilite", "disponible", "astreinte"],
+      "context_patterns": ["grande disponibilité", "bonne disponibilité", "astreinte.*permanente", "interventions.*hno", "hors.*heures.*ouvrées"]
+    }
+  },
+  "technical_expertise": {
+    "expertise technique": {
+      "synonyms": ["expertise technique", "expert technique", "expertise"],
+      "context_patterns": ["expertise.*technique", "niveau.*expertise", "compétences.*techniques.*avancées", "support.*n3"]
+    },
+    "diagnostic": {
+      "synonyms": ["diagnostic", "diagnostiquer", "troubleshooting"],
+      "context_patterns": ["capacité.*diagnostic", "analyser.*diagnostiquer", "diagnostic.*incidents", "troubleshooting"]
+    },
+    "documentation": {
+      "synonyms": ["documentation", "documenter"],
+      "context_patterns": ["rédiger.*documentation", "maintenir.*documentation", "documentation.*exploitation", "modes.*opératoires"]
+    },
+    "optimisation": {
+      "synonyms": ["optimisation", "optimiser", "performance"],
+      "context_patterns": ["optimisation.*performances", "optimiser.*traitements", "amélioration.*performances"]
+    },
+    "veille technologique": {
+      "synonyms": ["veille technologique", "veille technique", "veille"],
+      "context_patterns": ["veille.*technologique", "veille.*technique", "se tenir.*informé", "actualisation.*connaissances"]
     }
   }
 }

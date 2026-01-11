@@ -87,6 +87,36 @@
       "context_patterns": ["programmation matlab", "scripts matlab", "matlab.*calcul", "simulink"]
     }
   },
+  "systems": {
+    "linux": {
+      "synonyms": ["linux", "gnu/linux"],
+      "context_patterns": ["systèmes?.*linux", "environnements?.*linux", "administration.*linux", "serveurs?.*linux"]
+    },
+    "unix": {
+      "synonyms": ["unix"],
+      "context_patterns": ["systèmes?.*unix", "environnements?.*unix", "administration.*unix"]
+    },
+    "windows server": {
+      "synonyms": ["windows server", "windows srv"],
+      "context_patterns": ["serveurs?.*windows", "windows server", "administration.*windows.*serveur"]
+    },
+    "centos": {
+      "synonyms": ["centos"],
+      "context_patterns": ["distribution.*centos", "serveurs?.*centos"]
+    },
+    "ubuntu": {
+      "synonyms": ["ubuntu"],
+      "context_patterns": ["distribution.*ubuntu", "serveurs?.*ubuntu"]
+    },
+    "red hat": {
+      "synonyms": ["red hat", "rhel", "redhat"],
+      "context_patterns": ["red hat.*enterprise", "rhel", "serveurs?.*red hat"]
+    },
+    "debian": {
+      "synonyms": ["debian"],
+      "context_patterns": ["distribution.*debian", "serveurs?.*debian"]
+    }
+  },
   "frameworks": {
     "react": {
       "synonyms": ["react", "reactjs", "react.js"],
@@ -258,7 +288,7 @@
     },
     "databricks": {
       "synonyms": ["databricks"],
-      "context_patterns": ["plateforme.*databricks", "workspace.*databricks", "notebooks.*databricks", "lakehouse.*databricks", "scripts.*extraction.*databricks"]
+      "context_patterns": ["plateforme.*databricks", "workspace.*databricks", "notebooks.*databricks", "lakehouse.*databricks", "scripts.*extraction.*databricks", "scripts.*databricks", "données.*databricks"]
     }
   },
   "bi_analytics": {
@@ -319,6 +349,10 @@
     "devops": {
       "synonyms": ["devops", "dev ops"],
       "context_patterns": ["culture devops", "pratiques devops"]
+    },
+    "itil": {
+      "synonyms": ["itil", "itil v3", "itil v4"],
+      "context_patterns": ["framework.*itil", "processus.*itil", "gestion.*services.*it", "itsm", "certification.*itil"]
     }
   },
   "tools": {
@@ -381,6 +415,30 @@
     "prometheus": {
       "synonyms": ["prometheus"],
       "context_patterns": ["monitoring.*prometheus", "métriques.*prometheus", "alerting.*prometheus"]
+    },
+    "splunk": {
+      "synonyms": ["splunk"],
+      "context_patterns": ["supervision.*splunk", "logs.*splunk", "monitoring.*splunk", "recherche.*splunk"]
+    },
+    "datadog": {
+      "synonyms": ["datadog"],
+      "context_patterns": ["monitoring.*datadog", "supervision.*datadog", "apm.*datadog", "métriques.*datadog"]
+    },
+    "nagios": {
+      "synonyms": ["nagios"],
+      "context_patterns": ["supervision.*nagios", "monitoring.*nagios", "alerting.*nagios"]
+    },
+    "zabbix": {
+      "synonyms": ["zabbix"],
+      "context_patterns": ["supervision.*zabbix", "monitoring.*zabbix", "infrastructure.*zabbix"]
+    },
+    "elk": {
+      "synonyms": ["elk", "elk stack", "elastic stack"],
+      "context_patterns": ["stack.*elk", "elasticsearch.*logstash.*kibana", "logs.*elk", "supervision.*elk"]
+    },
+    "servicenow": {
+      "synonyms": ["servicenow", "service now"],
+      "context_patterns": ["plateforme.*servicenow", "itsm.*servicenow", "tickets.*servicenow", "incidents.*servicenow"]
     }
   },
   "data_concepts": {
@@ -414,11 +472,23 @@
     },
     "data lake": {
       "synonyms": ["data lake", "lac de données"],
-      "context_patterns": ["architecture.*data lake", "stockage.*data lake", "ingestion.*data lake"]
+      "context_patterns": ["plateforme.*data lake", "environnement.*data lake", "périmètre.*data lake", "architecture.*data lake", "stockage.*data lake", "ingestion.*data lake", "data lake.*critique", "support.*data lake"]
     },
     "data warehouse": {
-      "synonyms": ["data warehouse", "entrepôt de données", "datawarehouse"],
-      "context_patterns": ["architecture.*data warehouse", "entrepôt.*données", "dwh"]
+      "synonyms": ["data warehouse", "entrepôt de données", "datawarehouse", "dwh"],
+      "context_patterns": ["plateforme.*data warehouse", "environnement.*data warehouse", "architecture.*data warehouse", "entrepôt.*données", "dwh"]
+    },
+    "infogérance": {
+      "synonyms": ["infogérance", "infogerance", "managed services"],
+      "context_patterns": ["prestations?.*infogérance", "services?.*infogérance", "contrat.*infogérance"]
+    },
+    "exploitation": {
+      "synonyms": ["exploitation", "run", "mco"],
+      "context_patterns": ["exploitation.*production", "activités.*run", "maintien.*condition.*opérationnelle", "mco", "support.*exploitation"]
+    },
+    "incidents": {
+      "synonyms": ["gestion d'incidents", "gestion des incidents", "incident management"],
+      "context_patterns": ["gestion.*incidents", "résolution.*incidents", "incidents.*p0", "incidents.*p1", "support.*n2", "support.*n3"]
     }
   }
 }
