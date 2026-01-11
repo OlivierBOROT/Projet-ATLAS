@@ -86,7 +86,7 @@ python -m spacy download fr_core_news_md
 cd ../streamlit_app
 pip install -r requirements.txt
 
-# 4. Installer les dépendances collectors (optionnel)
+# 4. Installer les dépendances collectors
 cd ../collectors
 pip install -r requirements.txt
 ```
@@ -118,12 +118,3 @@ Assurez-vous de configurer les variables d'environnement nécessaires :
 - `DATABASE_URL` : URL de connexion PostgreSQL
 - `API_URL` : URL de l'API (par défaut : http://localhost:8000)
 - `RAPIDAPI_KEY`: Clé API pour Glassdoor
-
-### 📊 Génération des modèles NLP (optionnel)
-
-Si vous souhaitez régénérer les modèles de topic modeling :
-
-```bash
-cd NLP/scripts
-python topic_modeling_full.py
-```
