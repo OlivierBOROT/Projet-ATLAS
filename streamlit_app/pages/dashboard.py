@@ -495,20 +495,90 @@ st.markdown("---")
 st.subheader("📋 Dernières offres collectées")
 
 # Filtres rapides
-col_f1, col_f2, col_f3 = st.columns(3)
+col_f1, col_f2, col_f3, col_f4 = st.columns(4)
 
 with col_f1:
-    show_count = st.selectbox("Afficher", [10, 25, 50, 100], index=1)
+    show_count = st.selectbox(
+        "Afficher", [10, 25, 50, 100], index=1, key="offers_limit"
+    )
 
 with col_f2:
-    sort_by = st.selectbox("Trier par", ["Date", "Ville", "Métier", "Salaire"])
+    sort_by_options = {
+        "Date": "date",
+        "Ville": "ville",
+        "Métier": "metier",
+        "Salaire": "salaire",
+    }
+    sort_by_display = st.selectbox(
+        "Trier par", list(sort_by_options.keys()), key="offers_sort"
+    )
+    sort_by = sort_by_options[sort_by_display]
 
 with col_f3:
-    search_query = st.text_input("🔎 Rechercher", placeholder="Mot-clé...")
+    search_query = st.text_input(
+        "🔎 Rechercher", placeholder="Mot-clé...", key="offers_search"
+    )
+
+with col_f4:
+    # Réutiliser les mêmes filtres que les statistiques détaillées
+    date_filter_offers_options = {
+        "Tout": None,
+        "7 derniers jours": 7,
+        "30 derniers jours": 30,
+        "90 derniers jours": 90,
+    }
+    date_filter_offers_display = st.selectbox(
+        "Période", list(date_filter_offers_options.keys()), index=2, key="date_offers"
+    )
+    date_filter_offers = date_filter_offers_options[date_filter_offers_display]
+
+
+# Charger les offres avec filtres depuis le nouvel endpoint
+@st.cache_data(ttl=300)
+def load_collected_offers(
+    limit, sort_by, search=None, source=None, contract=None, days=None
+):
+    """Charge les offres collectées avec filtres avancés"""
+    try:
+        params = {
+            "limit": limit,
+            "offset": 0,
+            "sort_by": sort_by,
+        }
+        if search:
+            params["search"] = search
+        if source:
+            params["source"] = source
+        if contract:
+            params["contract"] = contract
+        if days:
+            params["days"] = days
+
+        response = requests.get(f"{API_URL}/api/offers/collected", params=params)
+        return response.json()
+    except:
+        return {"offers": [], "total": 0}
+
+
+# Charger les offres avec les filtres appliqués
+# On réutilise source_filter et contract_filter des statistiques détaillées s'ils existent
+collected_offers_data = load_collected_offers(
+    show_count,
+    sort_by,
+    search_query if search_query else None,
+    source_filter if "source_filter" in locals() else None,
+    contract_filter if "contract_filter" in locals() else None,
+    date_filter_offers,
+)
 
 # Affichage des offres
-if offers_data.get("count", 0) > 0:
-    offers = offers_data["offers"][:show_count]
+if collected_offers_data.get("total", 0) > 0:
+    offers = collected_offers_data["offers"]
+
+    # Afficher le nombre total
+    st.caption(
+        f"**{collected_offers_data['total']} offres** trouvées (affichage de {len(offers)})"
+    )
 
     # Mapping des sources
     source_names = {

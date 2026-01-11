@@ -17,10 +17,22 @@ from dotenv import load_dotenv
 # Import des routers (compatible local et Docker)
 try:
     # Import pour exécution locale (python -m uvicorn api.main:app)
-    from api.routers import scraper, glassdoor, map, dashboard_specific_statistics
+    from api.routers import (
+        scraper,
+        glassdoor,
+        map,
+        dashboard_specific_statistics,
+        dashboard_collected_offers,
+    )
 except (ModuleNotFoundError, ImportError):
     # Import pour Docker (WORKDIR /app, structure aplatie)
-    from routers import scraper, glassdoor, map, dashboard_specific_statistics
+    from routers import (
+        scraper,
+        glassdoor,
+        map,
+        dashboard_specific_statistics,
+        dashboard_collected_offers,
+    )
 
 # Charger les variables d'environnement
 load_dotenv()
@@ -57,6 +69,7 @@ app.include_router(map.router, prefix="/api", tags=["map"])
 app.include_router(
     dashboard_specific_statistics.router, prefix="/api", tags=["dashboard"]
 )
+app.include_router(dashboard_collected_offers.router, prefix="/api", tags=["dashboard"])
 
 
 def get_db():
