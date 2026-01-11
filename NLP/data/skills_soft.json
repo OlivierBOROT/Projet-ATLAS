@@ -19,6 +19,14 @@
     "négociation": {
       "synonyms": ["négociation", "negociation", "négocier"],
       "context_patterns": ["capacité.*négociation", "compétences.*négociation"]
+    },
+    "aisance à l'oral": {
+      "synonyms": ["aisance à l'oral", "aisance a l'oral", "aisance orale", "expression orale"],
+      "context_patterns": ["aisance.*oral", "capacité.*s'exprimer", "bonne.*expression.*orale"]
+    },
+    "rédaction": {
+      "synonyms": ["rédaction", "redaction", "rédactionnel", "écriture"],
+      "context_patterns": ["capacité.*rédaction", "compétences.*rédactionnelles", "qualités.*rédactionnelles", "aisance.*rédactionnelle"]
     }
   },
   "teamwork": {
@@ -177,6 +185,10 @@
     "résilience": {
       "synonyms": ["résilience", "resilience", "résilient"],
       "context_patterns": ["capacité.*résilience"]
+    },
+    "orientation résultats": {
+      "synonyms": ["orientation résultats", "orienté résultats", "axé résultats", "focus résultats"],
+      "context_patterns": ["orientation.*résultats", "axé.*résultats", "orienté.*objectifs", "atteinte.*objectifs"]
     }
   },
   "stress_management": {
@@ -201,6 +213,14 @@
     "gestion de conflits": {
       "synonyms": ["gestion de conflits", "gestion des conflits", "résolution de conflits"],
       "context_patterns": ["gérer.*conflits", "résoudre.*conflits", "gestion.*écarts.*périmètre"]
+    },
+    "sens du service": {
+      "synonyms": ["sens du service", "orientation client", "satisfaction client", "service client"],
+      "context_patterns": ["sens.*service", "orientation.*client", "satisfaction.*client", "relation.*client"]
+    },
+    "relationnel": {
+      "synonyms": ["relationnel", "relations interpersonnelles", "qualités relationnelles"],
+      "context_patterns": ["sens.*relationnel", "qualités.*relationnelles", "aisance.*relationnelle", "bon.*relationnel"]
     }
   },
   "commitment": {

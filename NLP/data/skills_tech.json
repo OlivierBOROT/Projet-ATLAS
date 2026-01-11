@@ -73,6 +73,18 @@
     "powershell": {
       "synonyms": ["powershell", "pwsh"],
       "context_patterns": ["scripts powershell", "administration windows"]
+    },
+    "vba": {
+      "synonyms": ["vba", "visual basic for applications"],
+      "context_patterns": ["développement vba", "macros vba", "excel vba", "automatisation.*vba"]
+    },
+    "sas": {
+      "synonyms": ["sas", "langage sas"],
+      "context_patterns": ["programmation sas", "développement sas", "proc sas", "sas.*statistiques"]
+    },
+    "matlab": {
+      "synonyms": ["matlab"],
+      "context_patterns": ["programmation matlab", "scripts matlab", "matlab.*calcul", "simulink"]
     }
   },
   "frameworks": {
@@ -139,6 +151,26 @@
     "kafka": {
       "synonyms": ["kafka", "apache kafka"],
       "context_patterns": ["streaming.*kafka", "kafka.*broker", "topics.*kafka", "kafka.*producer", "kafka.*consumer"]
+    },
+    "numpy": {
+      "synonyms": ["numpy", "np"],
+      "context_patterns": ["bibliothèque.*numpy", "numpy.*array", "calcul.*numpy", "numpy.*python"]
+    },
+    "scikit-learn": {
+      "synonyms": ["scikit-learn", "sklearn", "scikit learn"],
+      "context_patterns": ["bibliothèque.*scikit", "sklearn.*model", "machine learning.*scikit", "algorithmes.*sklearn"]
+    },
+    "selenium": {
+      "synonyms": ["selenium", "selenium webdriver"],
+      "context_patterns": ["automatisation.*selenium", "tests.*selenium", "selenium.*web", "webdriver"]
+    },
+    "pytest": {
+      "synonyms": ["pytest"],
+      "context_patterns": ["tests.*pytest", "framework.*test.*python", "pytest.*fixtures"]
+    },
+    "junit": {
+      "synonyms": ["junit", "junit5"],
+      "context_patterns": ["tests.*junit", "framework.*test.*java", "junit.*tests"]
     }
   },
   "databases": {
@@ -177,6 +209,22 @@
     "bigquery": {
       "synonyms": ["bigquery", "big query"],
       "context_patterns": ["bigquery.*warehouse", "entrepôt.*bigquery"]
+    },
+    "hive": {
+      "synonyms": ["hive", "apache hive"],
+      "context_patterns": ["requêtes.*hive", "hive.*hadoop", "tables.*hive", "hiveql"]
+    },
+    "cassandra": {
+      "synonyms": ["cassandra", "apache cassandra"],
+      "context_patterns": ["base.*cassandra", "nosql.*cassandra", "cluster.*cassandra"]
+    },
+    "neo4j": {
+      "synonyms": ["neo4j"],
+      "context_patterns": ["base.*graphe", "neo4j.*cypher", "graph.*database.*neo4j"]
+    },
+    "dynamodb": {
+      "synonyms": ["dynamodb", "dynamo db"],
+      "context_patterns": ["base.*dynamodb", "aws.*dynamodb", "nosql.*dynamodb"]
     }
   },
   "cloud": {
@@ -207,6 +255,10 @@
     "ansible": {
       "synonyms": ["ansible"],
       "context_patterns": ["automatisation.*ansible", "playbooks.*ansible", "rôles.*ansible", "ansible.*configuration", "inventaire.*ansible"]
+    },
+    "databricks": {
+      "synonyms": ["databricks"],
+      "context_patterns": ["plateforme.*databricks", "workspace.*databricks", "notebooks.*databricks", "lakehouse.*databricks", "scripts.*extraction.*databricks"]
     }
   },
   "bi_analytics": {
@@ -229,6 +281,18 @@
     "dbt": {
       "synonyms": ["dbt", "data build tool"],
       "context_patterns": ["modèles.*dbt", "transformations.*dbt", "dbt.*cloud", "dbt.*core", "tests.*dbt"]
+    },
+    "power apps": {
+      "synonyms": ["power apps", "powerapps"],
+      "context_patterns": ["applications.*power apps", "power platform.*apps", "développement.*power apps", "powerapps.*canvas"]
+    },
+    "power automate": {
+      "synonyms": ["power automate", "power automate", "microsoft flow"],
+      "context_patterns": ["automatisation.*power automate", "workflows.*power automate", "power platform.*automate", "flow.*automatiser"]
+    },
+    "metabase": {
+      "synonyms": ["metabase"],
+      "context_patterns": ["visualisation.*metabase", "dashboards.*metabase", "requêtes.*metabase"]
     }
   },
   "methodologies": {
@@ -289,6 +353,34 @@
     "redmine": {
       "synonyms": ["redmine"],
       "context_patterns": ["suivi de tickets", "outils.*redmine", "plateforme.*projets"]
+    },
+    "excel": {
+      "synonyms": ["excel", "microsoft excel"],
+      "context_patterns": ["maîtrise.*excel", "bonne connaissance.*excel", "tableaux.*excel", "formules.*excel", "excel.*avancé"]
+    },
+    "jupyter": {
+      "synonyms": ["jupyter", "jupyter notebook", "jupyter lab"],
+      "context_patterns": ["notebooks.*jupyter", "jupyter.*python", "analyse.*jupyter"]
+    },
+    "postman": {
+      "synonyms": ["postman"],
+      "context_patterns": ["tests.*api.*postman", "postman.*collections", "postman.*requests"]
+    },
+    "vs code": {
+      "synonyms": ["vs code", "vscode", "visual studio code"],
+      "context_patterns": ["éditeur.*vs code", "développement.*vscode"]
+    },
+    "visual studio": {
+      "synonyms": ["visual studio", "vs"],
+      "context_patterns": ["ide.*visual studio", "développement.*visual studio"]
+    },
+    "grafana": {
+      "synonyms": ["grafana"],
+      "context_patterns": ["dashboards.*grafana", "monitoring.*grafana", "visualisation.*grafana", "métriques.*grafana"]
+    },
+    "prometheus": {
+      "synonyms": ["prometheus"],
+      "context_patterns": ["monitoring.*prometheus", "métriques.*prometheus", "alerting.*prometheus"]
     }
   },
   "data_concepts": {
@@ -315,6 +407,18 @@
     "big data": {
       "synonyms": ["big data", "données massives"],
       "context_patterns": ["traitement.*big data", "analyse.*big data"]
+    },
+    "hadoop": {
+      "synonyms": ["hadoop", "apache hadoop"],
+      "context_patterns": ["cluster.*hadoop", "hdfs", "mapreduce", "écosystème.*hadoop"]
+    },
+    "data lake": {
+      "synonyms": ["data lake", "lac de données"],
+      "context_patterns": ["architecture.*data lake", "stockage.*data lake", "ingestion.*data lake"]
+    },
+    "data warehouse": {
+      "synonyms": ["data warehouse", "entrepôt de données", "datawarehouse"],
+      "context_patterns": ["architecture.*data warehouse", "entrepôt.*données", "dwh"]
     }
   }
 }
